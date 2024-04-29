@@ -22,11 +22,11 @@ export class PostResolver {
 
     @Mutation(() => Post)
     async createPost(
-        @Arg("title") title:String,
+        @Arg("title", () => String, {nullable:true}) title:String,
         @Ctx() {em}:MyContext 
     ): Promise <Post> {
 
-       const post = em.create(Post, {title:"This is from Apollo"}) 
+       const post = em.create(Post, {title:title}) 
         await em.fork({}).persistAndFlush(post)
         return post
     }
@@ -62,7 +62,7 @@ export class PostResolver {
         } catch (error) {
             if (error) return false 
         }
-        
+
         return true
     }
 

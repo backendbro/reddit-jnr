@@ -4,6 +4,7 @@ import { Post } from "./entities/Post";
 import { MikroORM } from "@mikro-orm/core";
 import { PostgreSqlDriver } from "@mikro-orm/postgresql";
 import { Migrator } from "@mikro-orm/migrations";
+import { User } from "./entities/User";
 
 
 export default {
@@ -12,7 +13,7 @@ export default {
         pattern:/^[\w-]+d\+\.[tj]s$/
     },
     extensions:[Migrator],
-    entities:[Post],
+    entities:[Post, User],
     allowGlobalContext:true,
     driver:PostgreSqlDriver,
     dbName:"redditjnr",
