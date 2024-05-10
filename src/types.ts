@@ -1,9 +1,9 @@
 import { Connection, EntityManager, IDatabaseDriver } from "@mikro-orm/core"
-import { Request, Response } from "express"
+import {ExpressContext } from "apollo-server-express"
 
 
 export type MyContext = {
     em: EntityManager<IDatabaseDriver<Connection>>;
-    req:Request
-    res:Response;
+    req: ExpressContext['req'];
+    res: ExpressContext['res'];
 }

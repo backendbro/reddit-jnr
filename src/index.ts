@@ -4,8 +4,8 @@ import "reflect-metadata"
 import {MikroORM} from "@mikro-orm/core"
 import { __prod__ } from "./constants"
 import mikroOrmConfig from "./mikro-orm.config"
-import express from "express"
-import {ApolloServer} from "apollo-server-express"
+import express, {Application} from "express"
+import {ApolloServer } from "apollo-server-express"
 import { buildSchema } from "type-graphql"
 import { HelloResolver } from "./resolvers/hello"
 import { PostResolver } from "./resolvers/post"
@@ -13,7 +13,7 @@ import { UserResolver } from "./resolvers/user"
 import { Redis } from "ioredis"
 import session from "express-session" 
 import { MyContext } from "./types"
-import { Request, Response } from "express"
+
 
 const envClient = () => {
     const envObj = {
@@ -42,12 +42,15 @@ const envClient = () => {
     return envObj 
 }
 
+const {ServerRegistration} = require("../node_modules/apollo-server-express/dist/ApolloServer")
+
+
 
 const main = async () => {
     const orm = await MikroORM.init(mikroOrmConfig)
     await orm.getMigrator().up();
 
-    const app = express()
+    const app: Application = express()
 
     const RedisStore = require("connect-redis").default;
     const redisClient = new Redis(envClient().red) 
@@ -74,17 +77,16 @@ const main = async () => {
 
 
 
-
     const apolloServer = new ApolloServer ({
         schema: await buildSchema({
             resolvers:[HelloResolver, PostResolver, UserResolver], 
             validate:false
         }), 
-        context: ({req, res}): MyContext => ({em: orm.em, req, res})
+        context: ({req,res}): MyContext => ({em:orm.em, req,res}) 
     })
 
     await apolloServer.start()
-    apolloServer.applyMiddleware({app}) 
+    apolloServer.applyMiddleware({ app:ServerRegistration }) 
 
     const port = 4000
     app.listen(port, () => {
