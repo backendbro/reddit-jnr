@@ -38,6 +38,7 @@
     "graphql": "^15.8.0",
     "ioredis": "^5.4.1",
     "pg": "^8.11.5",
+    "redis": "^4.6.13",
     "type-graphql": "^1.1.1"
   },
   "mikro-orm": {

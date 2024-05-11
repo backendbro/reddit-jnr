@@ -10,9 +10,9 @@ import { buildSchema } from "type-graphql"
 import { HelloResolver } from "./resolvers/hello"
 import { PostResolver } from "./resolvers/post"
 import { UserResolver } from "./resolvers/user"
-import { Redis } from "ioredis"
 import session from "express-session" 
 import { MyContext } from "./types"
+import {createClient} from "redis"
 
 
 const envClient = () => {
@@ -42,7 +42,7 @@ const envClient = () => {
     return envObj 
 }
 
-const {ServerRegistration} = require("../node_modules/apollo-server-express/dist/ApolloServer")
+//const {ServerRegistration} = require("../node_modules/apollo-server-express/dist/ApolloServer")
 
 
 
@@ -53,7 +53,8 @@ const main = async () => {
     const app: Application = express()
 
     const RedisStore = require("connect-redis").default;
-    const redisClient = new Redis(envClient().red) 
+    const redisClient = await createClient()
+    await redisClient.connect()
 
     app.use(
         session({
@@ -61,15 +62,16 @@ const main = async () => {
             // remember to add disableTouch to your session.store options
             store: new RedisStore({
                 client: redisClient,
-                disableTouch:false
+                disableTouch:false, 
+                ttl: 24 * 60 * 60
             }), 
             cookie:{
-                maxAge: Number(envClient().maxAge), 
+                maxAge: 2 * 60 * 60 * 1000, 
                 httpOnly:true, 
                 sameSite:"lax",
                 secure: __prod__
             }, 
-            secret: envClient().secret, 
+            secret: "t4t3t3tg432v342242#$@#@$@#@$", 
             resave:false, 
             saveUninitialized:true
         })
@@ -86,7 +88,7 @@ const main = async () => {
     })
 
     await apolloServer.start()
-    apolloServer.applyMiddleware({ app:ServerRegistration }) 
+    apolloServer.applyMiddleware({ app }) 
 
     const port = 4000
     app.listen(port, () => {
