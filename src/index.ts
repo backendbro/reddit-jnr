@@ -15,33 +15,6 @@ import { MyContext } from "./types"
 import {createClient} from "redis"
 
 
-const envClient = () => {
-    const envObj = {
-        red:"",
-        secret:"", 
-        name:"", 
-        maxAge:""
-    }
-
-    if (process.env.redisConnectionString){
-        envObj.red = process.env.redisConnectionString
-    }
-
-    if (process.env.sessionSecret) {
-        envObj.secret = process.env.sessionSecret
-    }
-
-    if (process.env.name) {
-        envObj.name = process.env.name 
-    }
-
-    if (process.env.maxAge) {
-        envObj.maxAge = process.env.maxAge
-    }
-
-    return envObj 
-}
-
 //const {ServerRegistration} = require("../node_modules/apollo-server-express/dist/ApolloServer")
 
 
@@ -58,7 +31,7 @@ const main = async () => {
 
     app.use(
         session({
-            name:envClient().name, 
+            name:"qid", 
             // remember to add disableTouch to your session.store options
             store: new RedisStore({
                 client: redisClient,
@@ -67,7 +40,7 @@ const main = async () => {
             }), 
             cookie:{
                 maxAge: 2 * 60 * 60 * 1000, 
-                httpOnly:true, 
+                httpOnly:false, 
                 sameSite:"lax",
                 secure: __prod__
             }, 
