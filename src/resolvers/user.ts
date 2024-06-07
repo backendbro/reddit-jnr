@@ -1,6 +1,6 @@
 import { User } from "../entities/User";
 import { MyContext } from "src/types";
-import { Ctx, Resolver, Arg, Mutation, InputType, Field, ObjectType } from "type-graphql";
+import { Ctx, Resolver, Arg, Mutation, InputType, Field, ObjectType, Query } from "type-graphql";
 import argon2 from "argon2"
 
 
@@ -114,7 +114,37 @@ export class UserResolver {
     }
 
     req.session.userId = user.id
-
+    console.log(req.session)
     return {user}
-}   
+}  
+
+
+@Query(() => UserResponse, {nullable:true})
+async me(
+    @Ctx() {em, req}: MyContext
+) : Promise<UserResponse>{
+
+    console.log(req.session)
+
+    const userId = req.session.userId
+    if (!userId) {
+        return {
+            errors:[{
+                field:"req.session.userId", 
+                message:"there is no userId in req.session"
+            }]
+        }
+    }
+    
+    const user = await em.findOne(User, {id: Number(userId)})
+    if (!user) {
+        return { errors: [{
+            field:"user", 
+            message:"the suppose current user does not exist in the database"
+        }]
+    }}
+
+    return {user} 
+}
+
 }
