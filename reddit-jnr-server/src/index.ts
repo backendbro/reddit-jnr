@@ -11,8 +11,8 @@ import { HelloResolver } from "./resolvers/hello"
 import { PostResolver } from "./resolvers/post"
 import { UserResolver } from "./resolvers/user"
 import session from "express-session" 
-import { MyContext } from "./types"
 import { createClient } from "redis"
+import cors from "cors"
 
 //import Redis from "ioredis"
 
@@ -24,11 +24,14 @@ const main = async () => {
     await orm.getMigrator().up();
 
     const app = express()
+    app.use(cors({
+        origin:["http://localhost:3000", "https://studio.apollographql.com"],
+        credentials:true
+    }))
 
     app.set("trust proxy",true);
-    app.set("Access-Control-Allow-Origin", "https://studio.apollographql.com");
+    app.set("Access-Control-Allow-Origin", ["https://studio.apollographql.com", "http://localhost:3000"]);
     app.set("Access-Control-Allow-Credentials", true);
-    
 
     const RedisStore = require("connect-redis").default;
 
@@ -37,8 +40,6 @@ const main = async () => {
     await client.connect()
 
     //const client = new Redis(process.env.redisConnectionString || "");
-
-
 
     app.use(
         session({
@@ -55,7 +56,7 @@ const main = async () => {
             secret: process.env.sessionSecret || "", 
             resave:false, 
             saveUninitialized:false
-        })
+        }) 
     )
 
 
@@ -64,11 +65,11 @@ const main = async () => {
             resolvers:[HelloResolver, PostResolver, UserResolver], 
             validate:false
         }), 
-        context: ({req,res}) : MyContext => ({em:orm.em, req,res}) 
+        context: ({req,res}) => ({em:orm.em, req,res}) 
     })
 
     await apolloServer.start()
-    apolloServer.applyMiddleware({ app, cors: { credentials: true, origin: "https://studio.apollographql.com" } } ) 
+    apolloServer.applyMiddleware({ app, cors: false } ) 
 
 
     const port = 4000

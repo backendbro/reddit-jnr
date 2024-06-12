@@ -3,7 +3,8 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
     "@chakra-ui/core": "^0.8.0",
@@ -13,14 +14,21 @@
     "@emotion/core": "^11.0.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.9.0",
+    "@graphql-codegen/typed-document-node": "^5.0.7",
+    "@graphql-codegen/typescript-operations": "^4.2.1",
+    "@graphql-codegen/typescript-urql": "^4.0.0",
     "emotion-theming": "^11.0.0",
     "formik": "^2.4.6",
     "framer-motion": "^6.3.0",
+    "graphql": "^16.8.1",
     "next": "latest",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "urql": "^4.1.0"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "5.0.2",
+    "@graphql-codegen/client-preset": "4.2.6",
     "@types/node": "^18.0.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
