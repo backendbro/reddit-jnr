@@ -25,7 +25,7 @@ const main = async () => {
 
     const app = express()
     app.use(cors({
-        origin:["http://localhost:3000", "https://studio.apollographql.com"],
+        origin:["https://studio.apollographql.com", "http://localhost:3000"],
         credentials:true
     }))
 
@@ -50,8 +50,8 @@ const main = async () => {
             cookie:{
                 maxAge: 1000 * 60 * 60 * 24 * 365 * 1, // 1 year
                 httpOnly: true,
-                sameSite: "none",
-                secure: true,
+                sameSite: "lax",
+                secure: false,
             }, 
             secret: process.env.sessionSecret || "", 
             resave:false, 
@@ -69,7 +69,7 @@ const main = async () => {
     })
 
     await apolloServer.start()
-    apolloServer.applyMiddleware({ app, cors: false } ) 
+    apolloServer.applyMiddleware({ app, cors:false } ) 
 
 
     const port = 4000
