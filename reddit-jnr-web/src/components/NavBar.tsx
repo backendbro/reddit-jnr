@@ -12,7 +12,7 @@ export const NavBar: React.FC<NavBarProps> = ({ }) => {
   if (fetching) {
     body = null 
   }else if (!data.me.user) {
-    body = (<>
+     body = (<>
         <NextLink href="/login">
           <Link mr={2}>
             login
@@ -33,7 +33,7 @@ export const NavBar: React.FC<NavBarProps> = ({ }) => {
   }
 
     return (
-    <Flex bg="tomato" p={4}>
+    <Flex bg="tan" p={4}>
       <Box ml={"auto"}>
         {body}
       </Box>
