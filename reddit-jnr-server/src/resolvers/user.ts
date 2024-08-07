@@ -1,6 +1,6 @@
 import { User } from "../entities/User";
 import { MyContext } from "src/types";
-import { Ctx, Resolver, Arg, Mutation, Field, ObjectType, Query, InputType } from "type-graphql";
+import { Ctx, Resolver, Arg, Mutation, Field, ObjectType, Query } from "type-graphql";
 import argon2 from "argon2"
 import { COOKIE_NAME, FORGOT_PASSWORD_PREFIX } from "../constants";
 import { UsernamePasswordInput } from "../ultis/UsernamePasswordInput";
@@ -38,17 +38,19 @@ export class UserResolver {
         @Ctx() {em, client, req}: MyContext 
     ): Promise<UserResponse> { 
 
+        
         if (newPassword.length <=2) {
+            
             return { errors: [
                 {
-                    field:"New Password", 
+                    field:"newPassword", 
                     message:"length must be greater than 2"
                 }
             ]}
         }
 
-        
-        const userId = client.get(FORGOT_PASSWORD_PREFIX + token)
+        const key = FORGOT_PASSWORD_PREFIX + token        
+        const userId = await client.get(FORGOT_PASSWORD_PREFIX + token)
         if (!userId) {
             return{ errors: [{
                 field:"token", 
@@ -57,7 +59,7 @@ export class UserResolver {
         }
 
 
-        const user = await em.findOne(User, {id: Number(userId) })
+        const user = await em.findOne(User, {id: Number(userId) }) 
         if (!user) {
             return {
                 errors: [
@@ -72,8 +74,8 @@ export class UserResolver {
         user.password  = await argon2.hash(newPassword) 
         await em.persistAndFlush(user) 
         
-
-        req.session.user = user.id 
+        await client.del(key) 
+        req.session.userId = user.id 
         return { user } 
     }
 
@@ -91,8 +93,7 @@ export class UserResolver {
         const token = v4()
         
         try {
-            const decode = await client.set(FORGOT_PASSWORD_PREFIX+token, user.id, "EX", 1000 * 60 * 60 * 24 * 3)  
-            console.log(decode) 
+            await client.set(FORGOT_PASSWORD_PREFIX+token, user.id, "EX", 1000 * 60 * 60 * 24 * 3)   
         } catch (error) {
             console.log(`Error message: ${error}`) 
         }

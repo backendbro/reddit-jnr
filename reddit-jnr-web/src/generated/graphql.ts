@@ -139,13 +139,21 @@ export type LoginMutation = { __typename?: 'Mutation', login: (
   ) };
 
 
-export type RegularUserResponseFragment = { __typename?: 'UserResponse', errors?: Array<(
-    { __typename?: 'FieldError' }
-    & { ' $fragmentRefs'?: { 'RegularErrorFragment': RegularErrorFragment } }
-  )> | null, user?: (
-    { __typename?: 'User' }
-    & { ' $fragmentRefs'?: { 'RegularUserFragment': RegularUserFragment } }
-  ) | null } & { ' $fragmentName'?: 'RegularUserResponseFragment' };
+// export type RegularUserResponseFragment = { __typename?: 'UserResponse', errors?: Array<(
+//     { __typename?: 'FieldError' }
+//     & { ' $fragmentRefs'?: { 'RegularErrorFragment': RegularErrorFragment } }
+//   )> | null, user?: (
+//     { __typename?: 'User' }
+//     & { ' $fragmentRefs'?: { 'RegularUserFragment': RegularUserFragment } }
+//   ) | null } & { ' $fragmentName'?: 'RegularUserResponseFragment' };
+
+
+export type RegularUserResponseFragment = {
+  __typename?: 'UserResponse';
+  errors?: Array<{ __typename?: 'FieldError'; }> | null;
+  user?: { __typename?: 'User'; } | null;
+};
+
 
 export type ChangePasswordMutationVariables = Exact<{
   token: Scalars['String']['input'];
@@ -160,6 +168,13 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
+
+export type ForgotPasswordMutationVariables = Exact<{
+  email: Scalars['String']['input'];
+}>;
+
+export type ForgotPasswordMutation = { __typename?: 'Mutation', forgotPassword: boolean };
+
 
 export type RegisterMutationVariables = Exact<{
   options: UsernamePasswordInput;
@@ -243,6 +258,17 @@ export const LogoutDocument = gql`
 export function useLogoutMutation() {
   return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
 };
+
+export const ForgotPasswordDocument = gql`
+    mutation ForgotPassword($email: String!) {
+  forgotPassword(email: $email)
+}
+    `;
+
+export function useForgotPasswordMutation() {
+  return Urql.useMutation<ForgotPasswordMutation, ForgotPasswordMutationVariables>(ForgotPasswordDocument);
+};
+
 export const RegisterDocument = gql`
     mutation Register($options: UsernamePasswordInput!) {
   register(options: $options) {
