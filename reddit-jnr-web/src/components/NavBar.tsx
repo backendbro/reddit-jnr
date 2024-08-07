@@ -1,19 +1,24 @@
 import { Box, Button, Link, Flex } from "@chakra-ui/react"
 import NextLink from "next/link"
 import { useMeQuery, useLogoutMutation } from "../generated/graphql"
+import { isServer } from "../ultis/isServer"
+import { withUrqlClient } from "next-urql"
+import { createUrqlClient } from "../ultis/createUrqlClient"
 
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({ }) => {
-  const [{data, fetching}] = useMeQuery()
+  const [{data, fetching}] = useMeQuery({
+    pause:isServer()  
+  })
   const [{fetching: logoutFectching}, logout] = useLogoutMutation()
   
-  let body = null 
   
+  let body = null 
   if (fetching) {
-    body = null 
-  }else if (!data.me.user) {
-     body = (<>
+    body = null    
+  }else if (!data?.me?.user?.username) {
+     body = (<> 
         <NextLink href="/login">
           <Link mr={2}>
             login
@@ -25,12 +30,14 @@ export const NavBar: React.FC<NavBarProps> = ({ }) => {
           </Link>
         </NextLink>
     </>)
-  }else {
+  }
+  
+  else {
     
     body = 
     <Flex>
-        <Box mr={3}>{data.me?.user?.username} </Box>
-        <Button variant={"link"} onClick = {
+        <Box mr={3}>{data?.me?.user?.username} </Box> 
+        <Button variant={"link"} isLoading={logoutFectching} onClick = {
           () => {
             logout() 
           }
@@ -48,3 +55,4 @@ export const NavBar: React.FC<NavBarProps> = ({ }) => {
 }
 
 export default NavBar
+//export default withUrqlClient(createUrqlClient, {ssr:true}) ( NavBar )

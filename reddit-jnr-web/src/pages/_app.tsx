@@ -13,6 +13,7 @@ const client = createClient({
   }
 })
 
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Provider value={client}>

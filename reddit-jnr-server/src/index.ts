@@ -12,15 +12,12 @@ import { PostResolver } from "./resolvers/post"
 import { UserResolver } from "./resolvers/user"
 import session from "express-session" 
 import { createClient } from "redis"
+//import {Redis} from "ioredis"
 import cors from "cors"
 
-//import Redis from "ioredis"
-
-
-
-
 const main = async () => {
-    const orm = await MikroORM.init(mikroOrmConfig)
+    
+    const orm = await MikroORM.init(mikroOrmConfig)    
     await orm.getMigrator().up();
 
     const app = express()
@@ -40,6 +37,7 @@ const main = async () => {
     await client.connect()
 
     //const client = new Redis(process.env.redisConnectionString || "");
+
 
     app.use(
         session({
@@ -65,7 +63,7 @@ const main = async () => {
             resolvers:[HelloResolver, PostResolver, UserResolver], 
             validate:false
         }), 
-        context: ({req,res}) => ({em:orm.em, req,res}) 
+        context: ({req,res}) => ({em:orm.em, req,res, client}) 
     })
 
     await apolloServer.start()

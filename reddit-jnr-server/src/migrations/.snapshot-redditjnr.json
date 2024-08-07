@@ -99,6 +99,15 @@
           "nullable": false,
           "mappedType": "text"
         },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
         "password": {
           "name": "password",
           "type": "text",
@@ -118,6 +127,16 @@
           ],
           "composite": false,
           "keyName": "user_username_unique",
+          "constraint": true,
+          "primary": false,
+          "unique": true
+        },
+        {
+          "columnNames": [
+            "email"
+          ],
+          "composite": false,
+          "keyName": "user_email_unique",
           "constraint": true,
           "primary": false,
           "unique": true
