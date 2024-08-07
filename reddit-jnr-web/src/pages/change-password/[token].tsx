@@ -92,6 +92,7 @@ const ChangePassword: NextPage<{token:string}> = ({token}) => {
                                 <NextLink href="/forgot-password">
                                     <Link> click here to get a new one </Link>
                                 </NextLink>
+                                
                             </Flex>
                          
                          : null}

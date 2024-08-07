@@ -1,9 +1,9 @@
 require('dotenv').config()
 
 import "reflect-metadata"
-import {MikroORM} from "@mikro-orm/core"
+import { InMemoryLRUCache } from '@apollo/utils.keyvaluecache';
+
 import { COOKIE_NAME, __prod__ } from "./constants"
-import mikroOrmConfig from "./mikro-orm.config"
 import express from "express"
 import {ApolloServer} from "apollo-server-express"
 import { buildSchema } from "type-graphql"
@@ -12,13 +12,32 @@ import { PostResolver } from "./resolvers/post"
 import { UserResolver } from "./resolvers/user"
 import session from "express-session" 
 import { createClient } from "redis"
-//import {Redis} from "ioredis"
+import {DataSource } from "typeorm"
 import cors from "cors"
+import { Post } from "./entities/Post"
+import { User } from "./entities/User"
+
+//import {Redis} from "ioredis"
 
 const main = async () => {
     
-    const orm = await MikroORM.init(mikroOrmConfig)    
-    await orm.getMigrator().up();
+    const dataSource = new DataSource ({
+        type:"postgres", 
+        database:'lilreddit2', 
+        username:"postgres", 
+        password:'islam123', 
+        logging:true, 
+        synchronize:true, 
+        entities: [Post, User]         
+    })
+    
+    dataSource.initialize()
+    .then(() => {
+        console.log("Data Source has been initialized!")
+    })
+    .catch((err) => {
+        console.error("Error during Data Source initialization", err)
+    })
 
     const app = express()
     app.use(cors({
@@ -63,7 +82,11 @@ const main = async () => {
             resolvers:[HelloResolver, PostResolver, UserResolver], 
             validate:false
         }), 
-        context: ({req,res}) => ({em:orm.em, req,res, client}) 
+        context: ({req,res}) => ({req,res, dataSource, client}),
+        cache: new InMemoryLRUCache({
+            maxSize: Math.pow(2, 20) * 100,
+            ttl: 300,
+          })
     })
 
     await apolloServer.start()
