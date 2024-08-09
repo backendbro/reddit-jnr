@@ -37,9 +37,7 @@ const ChangePassword: NextPage<{token:string}> = ({token}) => {
                 
                     if((response.data?.changePassword as RegularUserResponseFragment).errors) {  
 
-                        const error = (response.data?.changePassword as RegularUserResponseFragment).errors 
-
-                        console.log(JSON.parse(JSON.stringify(error))) 
+                        const error = (response.data?.changePassword as RegularUserResponseFragment).errors  
 
                         const errorMap = transformErrors(error)  
                         const toErrorMapV = toErrorMap(errorMap) 
