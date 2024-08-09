@@ -1,5 +1,6 @@
 /* eslint-disable */
 import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+import { useMutation } from 'urql';
 import gql from 'graphql-tag';
 import * as Urql from 'urql';
 export type Maybe<T> = T | null;
@@ -256,7 +257,7 @@ export const LogoutDocument = gql`
     `;
 
 export function useLogoutMutation() {
-  return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
+  return useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
 };
 
 export const ForgotPasswordDocument = gql`

@@ -5,30 +5,20 @@ import { Link, Flex } from "@chakra-ui/react"
 import Wrapper from '../../components/Wrapper';
 import InputField from '../../components/InputField';
 import { Button } from '@chakra-ui/button';
-import { FieldError, RegularUserResponseFragment, useChangePasswordMutation, useLoginMutation } from "../../generated/graphql"
+import { FieldError, RegularUserResponseFragment, useChangePasswordMutation } from "../../generated/graphql"
 import { toErrorMap } from '../../ultis/toErrorMap';
 import NextLink from "next/link"
-import router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { useState } from "react";
-import { createUrqlClient } from "../../ultis/createUrqlClient";
-import { withUrqlClient } from "next-urql";
+import { transformErrors } from "../../ultis/trasformer";
+
+//import { createUrqlClient } from "../../ultis/createUrqlClient";
+//import { withUrqlClient } from "next-urql";
 
 
 const ChangePassword: NextPage<{token:string}> = ({token}) => {
     const router = useRouter() 
     const [, changePassword] = useChangePasswordMutation() 
-
-    const transformErrors = (errors: Array<{ __typename?: "FieldError"; field?: string; message?: string }> | null): FieldError[] => {
-  
-        if (!errors) {
-            return[] 
-        }
-        
-        return errors.map(err => ({
-          field: err.field || '',
-          message: err.message || ''
-        }));
-      };
 
 
 
@@ -48,9 +38,11 @@ const ChangePassword: NextPage<{token:string}> = ({token}) => {
                     if((response.data?.changePassword as RegularUserResponseFragment).errors) {  
 
                         const error = (response.data?.changePassword as RegularUserResponseFragment).errors 
-                        const errorMap = transformErrors(error) 
-                        const toErrorMapV = toErrorMap(errorMap)
-                       
+
+                        console.log(JSON.parse(JSON.stringify(error))) 
+
+                        const errorMap = transformErrors(error)  
+                        const toErrorMapV = toErrorMap(errorMap) 
                        
 
                         if ("token" in toErrorMapV){
@@ -77,11 +69,11 @@ const ChangePassword: NextPage<{token:string}> = ({token}) => {
                                 name="newPassword"
                                 placeholder='Enter new password'
                                 label='New Password'
-                                type="password"
+                                type="password" 
                         />
                         </Box>
 
-                        {tokenError ?
+                        { tokenError ?
 
                          
                             <Flex>
@@ -95,7 +87,7 @@ const ChangePassword: NextPage<{token:string}> = ({token}) => {
                                 
                             </Flex>
                          
-                         : null}
+                         : null }
 
                          <Button type="submit" mt={4} isLoading={isSubmitting} color="white" bgColor="teal">Change password</Button>
                         </Form>

@@ -11,13 +11,23 @@ export const NavBar: React.FC<NavBarProps> = ({ }) => {
   const [{data, fetching}] = useMeQuery({
     pause:isServer()  
   })
-  const [{fetching: logoutFectching}, logout] = useLogoutMutation()
-  
+
+  const [{ fetching:logoutFectching, error }, logout] = useLogoutMutation();
+
+  const handleLogout = async () => {
+    try {
+        await logout({});
+       
+    } catch (err) {
+      
+        console.error(err);
+    }
+  };
   
   let body = null 
   if (fetching) {
     body = null    
-  }else if (!data?.me?.user?.username) {
+  } else if (!data?.me?.user?.username) {
      body = (<> 
         <NextLink href="/login">
           <Link mr={2}>
@@ -38,12 +48,10 @@ export const NavBar: React.FC<NavBarProps> = ({ }) => {
     <Flex>
         <Box mr={3}>{data?.me?.user?.username} </Box> 
         <Button variant={"link"} isLoading={logoutFectching} onClick = {
-          () => {
-            logout() 
-          }
+          handleLogout
         }> logout </Button>
     </Flex>
-  }
+  } 
 
     return (
     <Flex bg="tan" p={4}>

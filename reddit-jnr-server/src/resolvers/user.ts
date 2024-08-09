@@ -39,20 +39,23 @@ export class UserResolver {
     ): Promise<UserResponse> { 
 
         
-        if (newPassword.length <=2) {
+        if (newPassword.length <= 2) {
             
-            return { errors: [
-                {
+            return { 
+                errors: 
+                [{
                     field:"newPassword", 
                     message:"length must be greater than 2"
-                }
-            ]}
+                }]
+        }
         }
 
         const key = FORGOT_PASSWORD_PREFIX + token        
         const id = await client.get(FORGOT_PASSWORD_PREFIX + token)
+        
         if (!id) {
-            return{ errors: [{
+            return { 
+                errors: [{
                 field:"token", 
                 message:"expired token"
             }]}
@@ -109,15 +112,17 @@ export class UserResolver {
         @Ctx() {req,dataSource}:MyContext
     ): Promise <UserResponse> {
                 
-         const errors = validateRegister(options) 
+        const errors = validateRegister(options) 
         if (errors) {
-            return {errors} 
+            return { errors } 
         }
 
         let user; 
         const hashedPassword = await argon2.hash(options.password)
 
         try { 
+
+            
             const result = await dataSource
             .createQueryBuilder()
             .insert()
@@ -125,10 +130,14 @@ export class UserResolver {
             .values({ username: options.username, email:options.email, password: hashedPassword} )
             .returning("*")
             .execute()
-                
+            
+            // this works too. I just the sql syntax
+            //  const result = await User.create({ username: options.username, email: options.email, password: hashedPassword})
+            
             user = result.raw[0]
+        
         } catch (error) {     
-            console.log(error)       
+              
             if (error.code === '23505') {
                 return {
                     errors:[{
@@ -159,7 +168,8 @@ export class UserResolver {
     )   
         
         if (!user) {
-            return { errors: [{
+            return { 
+                errors: [{
                 field:"username", 
                 message:"that username does not exists"
             }]
@@ -197,10 +207,12 @@ async me(
             }]
         }
     }
+
     const id = parseInt(userId) 
     const user = await User.findOne({where: {id}})
     if (!user) {
-        return { errors: [{
+        return { 
+            errors: [{
             field:"user", 
             message:"the suppose current user does not exist in the database"
         }]
@@ -214,7 +226,7 @@ async me(
         @Ctx(){req, res}:MyContext
     ){
 
-        return new Promise (resolve => {
+        return new Promise ( resolve => {
             try {
                 req.session = null 
                 res.clearCookie(COOKIE_NAME)

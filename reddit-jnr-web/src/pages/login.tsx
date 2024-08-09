@@ -1,4 +1,6 @@
 import React from 'react'
+
+
 import {Form, Formik} from "formik"
 import Box from '@chakra-ui/core/dist/Box';
 import NextLink from "next/link"
@@ -59,22 +61,20 @@ export const Login: React.FC<loginProps> = () => {
                 } else if ((response.data?.login as RegularUserResponseFragment).user) {
                     router.push("/")
                 }
-
-
             }}>
                 {({isSubmitting}) => (
                     <Form>
                        <InputField 
-                            name="usernameOrEmail"
-                            placeholder='username Or Email'
-                            label='username Or Email'
+                            name="username or email"
+                            placeholder='username or email'
+                            label='username or email'
                        />
 
                     <Box mt={4}>
                         <InputField 
                             name="password"
                             placeholder='password'
-                            label='Password'
+                            label='password'
                             type="password"
                        />
                     </Box>

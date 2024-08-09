@@ -1,15 +1,18 @@
 import React from 'react'
 import {Form, Formik} from "formik"
+import { useRouter } from 'next/router';
+import { withUrqlClient } from 'next-urql';
+
 import Box from '@chakra-ui/core/dist/Box';
+import { Button } from '@chakra-ui/button';
 
 import Wrapper from '../components/Wrapper';
 import InputField from '../components/InputField';
-import { Button } from '@chakra-ui/button';
-import { useRegisterMutation } from "../generated/graphql"
+
+import { RegularUserResponseFragment, useRegisterMutation } from "../generated/graphql"
 import { toErrorMap } from '../ultis/toErrorMap';
-import { useRouter } from 'next/router';
-import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../ultis/createUrqlClient';
+import { transformErrors } from '../ultis/trasformer';
 
 interface registerProps {}
 
@@ -23,10 +26,18 @@ export const Register: React.FC<registerProps> = () => {
 
             <Formik initialValues={{username:"", email:"", password:""}} onSubmit={ async (values, {setErrors}) => {
                 const response = await register({options: values})
-                console.log(response)
-                if (response.data.register?.errors) {
-                    setErrors(toErrorMap(response.data.register.errors))
-                }else if (response.data?.register.user) {
+              
+                if ( (response.data?.register as RegularUserResponseFragment).errors)  {
+
+                    const error = (response.data?.register as RegularUserResponseFragment).errors  
+
+                        const errorMap = transformErrors(error)  
+                        const toErrorMapV = toErrorMap(errorMap) 
+
+                        const sepError = JSON.parse( JSON.stringify(toErrorMapV) ) 
+                        setErrors(sepError) 
+
+                }else if ((response.data?.register as RegularUserResponseFragment).user) {
                     router.push("/")
                 }
             }}>
@@ -34,7 +45,7 @@ export const Register: React.FC<registerProps> = () => {
                     <Form>
                        <InputField 
                             name="username"
-                            placeholder='Username'
+                            placeholder='username'
                             label='username'
                        />
 
@@ -50,7 +61,7 @@ export const Register: React.FC<registerProps> = () => {
                         <InputField 
                             name="password"
                             placeholder='password'
-                            label='Password'
+                            label='password'
                             type="password"
                        />
                     </Box>
