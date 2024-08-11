@@ -1,6 +1,4 @@
 import React from 'react'
-
-
 import {Form, Formik} from "formik"
 import Box from '@chakra-ui/core/dist/Box';
 import NextLink from "next/link"
@@ -40,34 +38,42 @@ export const Login: React.FC<loginProps> = () => {
 
 
             <Formik initialValues={{usernameOrEmail:"", password:""}} onSubmit={ async (values, {setErrors}) => {
+            
                 const response = await login(values)
             
 
-
-                if ((response.data?.login as RegularUserResponseFragment).errors)  {
+                const errors =  (response.data?.login as RegularUserResponseFragment).errors
+                if (errors)  {
                         
                         const error = (response.data?.login as RegularUserResponseFragment).errors 
                         const errorMap = transformErrors(error) 
                         const toErrorMapV = toErrorMap(errorMap)
-                       
-                        //setErrors(toErrorMap(response.data.login.errors))
-
-                        const sepError = JSON.parse( JSON.stringify(toErrorMapV) ) 
                         
+                       
+                      //  setErrors(toErrorMap(response.data.login.errors))
+
+                        const sepError = JSON.stringify(toErrorMapV) 
+                     
                         if (sepError){
-                            setErrors (sepError) 
+                            setErrors (JSON.parse(sepError)) 
                         }
 
                 } else if ((response.data?.login as RegularUserResponseFragment).user) {
-                    router.push("/")
+                    if (typeof router.query.next === "string") {
+                        router.push(router.query.next)
+                    }else{
+                        router.push("/")
+                    }
+
+                    
                 }
             }}>
                 {({isSubmitting}) => (
                     <Form>
                        <InputField 
-                            name="username or email"
+                            name="usernameOrEmail"
                             placeholder='username or email'
-                            label='username or email'
+                            label='usernameOrEmail'
                        />
 
                     <Box mt={4}>

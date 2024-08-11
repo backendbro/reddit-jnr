@@ -1,5 +1,5 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import { cacheExchange, Provider, createClient, debugExchange, fetchExchange } from "urql";
+import { cacheExchange, Provider, createClient, debugExchange, fetchExchange, Exchange } from "urql";
 import theme from "../theme";
 import { AppProps } from "next/app";
 
@@ -7,7 +7,7 @@ import { AppProps } from "next/app";
  
 const client = createClient({
   url: "http://localhost:4000/graphql",
-  exchanges: [debugExchange, cacheExchange, fetchExchange], 
+  exchanges: [debugExchange, cacheExchange, fetchExchange] , 
   fetchOptions:{
     credentials:"include"
   }
@@ -25,3 +25,5 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 
 export default MyApp;
+
+

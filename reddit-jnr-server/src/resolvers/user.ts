@@ -162,16 +162,19 @@ export class UserResolver {
         @Ctx() {req}: MyContext 
     ) : Promise <UserResponse> {
         
-        const user = await User.findOne(usernameOrEmail.includes("@") ? 
-        { where: {email: usernameOrEmail} } : 
-        { where: { username: usernameOrEmail} }
-    )   
+        let user; 
+        if (usernameOrEmail.includes("@")) {
+            user = await User.findOne({where: {email: usernameOrEmail} } )   
+        } else {
+            user = await User.findOne({where: {username: usernameOrEmail}})
+        }
         
+
         if (!user) {
             return { 
                 errors: [{
                 field:"username", 
-                message:"that username does not exists"
+                message:"username does not exists"
             }]
         }}
         

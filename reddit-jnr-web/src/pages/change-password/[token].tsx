@@ -16,23 +16,21 @@ import { transformErrors } from "../../ultis/trasformer";
 //import { withUrqlClient } from "next-urql";
 
 
-const ChangePassword: NextPage<{token:string}> = ({token}) => {
+const ChangePassword: NextPage<{token:string}> = () => {
     const router = useRouter() 
+
+    console.log(router.query.token)
     const [, changePassword] = useChangePasswordMutation() 
-
-
-
-      const [tokenError, setTokenError] = useState('') 
+    const [tokenError, setTokenError] = useState('') 
       
     return (
         <>
             <Wrapper variant='small'>
 
-
                 <Formik initialValues={{newPassword:""}} onSubmit={ async (values, {setErrors}) => {
                     const response = await changePassword({
                         newPassword: values.newPassword, 
-                        token: token 
+                        token: router.query.token === "string" ? router.query.token : ""  
                     }) 
                 
                     if((response.data?.changePassword as RegularUserResponseFragment).errors) {  
@@ -96,11 +94,11 @@ const ChangePassword: NextPage<{token:string}> = ({token}) => {
     )
 }
 
-ChangePassword.getInitialProps = ({query}) => {
-    return {
-        token: query.token as string 
-    }
-}
+// ChangePassword.getInitialProps = ({query}) => {
+//     return {
+//         token: query.token as string 
+//     }
+// }
 
 export default ChangePassword 
 //export default withUrqlClient (createUrqlClient, {ssr:true})(ChangePassword)

@@ -1,38 +1,31 @@
-import { Box, Flex, Button } from "@chakra-ui/react"
+import { Box, Button } from "@chakra-ui/react"
 import { Formik, Form } from "formik"
-import Link from "next/link"
-import router from "next/router"
-import React from "react"
+import React, { useEffect } from "react"
 import InputField from "../components/InputField"
-import Wrapper from "../components/Wrapper"
-import { RegularUserResponseFragment } from "../generated/graphql"
-import { toErrorMap } from "../ultis/toErrorMap"
-import { transformErrors } from "../ultis/trasformer"
+import { useCreatePostMutation, useMeQuery } from "../generated/graphql"
+import {useRouter} from "next/router" 
+import Layout from "../components/Layout"
+import { isAuth } from "../ultis/isAuth"
 
 const createPost: React.FC <{}> = ({}) => {
+    const router = useRouter() 
+    isAuth() 
+    
+    const [, createPost] = useCreatePostMutation()
     return (
-        <Wrapper variant='small'>
+        <Layout variant='small'>
 
 
         <Formik initialValues={{title:"", text:""}} onSubmit={ async (values, {setErrors}) => {
-            console.log(values)
-            // if ((response.data?.login as RegularUserResponseFragment).errors)  {
-                    
-            //         const error = (response.data?.login as RegularUserResponseFragment).errors 
-            //         const errorMap = transformErrors(error) 
-            //         const toErrorMapV = toErrorMap(errorMap)
-                   
-            //         //setErrors(toErrorMap(response.data.login.errors))
+            const {error} = await createPost({input:values})
 
-            //         const sepError = JSON.parse( JSON.stringify(toErrorMapV) ) 
-                    
-            //         if (sepError){
-            //             setErrors (sepError) 
-            //         }
+            if (error.message.includes("not authenticated")){
+                setErrors ({title:" ", text: error.message}) 
+                router.replace("/login")
+            } else  {
+                router.push('/')
+            }
 
-            // } else if ((response.data?.login as RegularUserResponseFragment).user) {
-            //     router.push("/")
-            // }
         }}>
             {({isSubmitting}) => (
                 <Form>
@@ -55,7 +48,7 @@ const createPost: React.FC <{}> = ({}) => {
                 </Form>
             )}
         </Formik>
-        </Wrapper>
+        </Layout>
     )
 }
 
