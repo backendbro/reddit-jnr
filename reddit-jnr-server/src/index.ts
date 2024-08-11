@@ -89,7 +89,8 @@ const main = async () => {
         cache: new InMemoryLRUCache({ // to prevent DOS attacks. This helps prevent memory leak 
             maxSize: Math.pow(2, 20) * 100,
             ttl: 300,
-          })
+          }), 
+          introspection: true
     })
 
     await apolloServer.start()
