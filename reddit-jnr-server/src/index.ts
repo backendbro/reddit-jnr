@@ -22,7 +22,8 @@ import { Post } from "./entities/Post"
 import { User } from "./entities/User"
 
 import {Redis} from "ioredis"
-
+import path from "path"
+ 
 const main = async () => {
     
     const dataSource = new DataSource ({
@@ -31,16 +32,18 @@ const main = async () => {
         username:"postgres", 
         password:'islam123', 
         logging:true, 
-        synchronize:true, 
+        synchronize:false, 
+        migrations:[path.join(__dirname, "./migrations/*")],
         entities: [Post, User]         
     })
+
+    try {
+        await dataSource.initialize()
+        // await dataSource.runMigrations()
+    } catch (error) {
+        console.error("Error during Data Source initialization", error)
+    }
     
-    dataSource.initialize()
-    .then( () => {
-    })
-    .catch((err) => {
-        console.error("Error during Data Source initialization", err)
-    })
 
     const app = express()
     app.use(cors({
