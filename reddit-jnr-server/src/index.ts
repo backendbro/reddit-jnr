@@ -89,7 +89,7 @@ const main = async () => {
             validate:false
         }), 
         context: ({req,res}) => ({req,res, dataSource, client}),
-        cache: new InMemoryLRUCache({ // to prevent DOS attacks. This helps prevent memory leak 
+        cache: new InMemoryLRUCache({ // to prevent DOS attacks.
             maxSize: Math.pow(2, 20) * 100,
             ttl: 300,
           }), 

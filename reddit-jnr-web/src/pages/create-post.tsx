@@ -8,7 +8,7 @@ import Layout from "../components/Layout"
 import { isAuth } from "../ultis/isAuth"
 
 const createPost: React.FC <{}> = ({}) => {
-    const router = useRouter() 
+    const router = useRouter()
     isAuth() 
     
     const [, createPost] = useCreatePostMutation()
@@ -19,12 +19,12 @@ const createPost: React.FC <{}> = ({}) => {
         <Formik initialValues={{title:"", text:""}} onSubmit={ async (values, {setErrors}) => {
             const {error} = await createPost({input:values})
 
-            if (error.message.includes("not authenticated")){
+            if (error?.message.includes("not authenticated")){
                 setErrors ({title:" ", text: error.message}) 
                 router.replace("/login")
-            } else  {
-                router.push('/')
-            }
+            } 
+
+            router.push("/") 
 
         }}>
             {({isSubmitting}) => (

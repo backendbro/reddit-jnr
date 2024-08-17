@@ -9,8 +9,8 @@ import { Button } from '@chakra-ui/button';
 import { FieldError, RegularUserResponseFragment, useLoginMutation } from "../generated/graphql"
 import { toErrorMap } from '../ultis/toErrorMap';
 import { useRouter } from 'next/router';
-// import { withUrqlClient } from 'next-urql';
-// import { createUrqlClient } from '../ultis/createUrqlClient';
+import { withUrqlClient } from 'next-urql';
+import { createUrqlClient } from '../ultis/createUrqlClient';
 
 
 interface loginProps {}
@@ -99,5 +99,5 @@ export const Login: React.FC<loginProps> = () => {
         );
 }
 
-export default Login
-//export default withUrqlClient(createUrqlClient) (Login)
+//export default Login
+export default withUrqlClient(createUrqlClient) (Login)

@@ -143,10 +143,16 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: (
-    { __typename?: 'UserResponse' }
-    & { ' $fragmentRefs'?: { 'RegularUserResponseFragment': RegularUserResponseFragment } }
-  ) };
+export type LoginMutation = { __typename?: 'Mutation', login: { 
+    // { __typename?: 'UserResponse' }
+    // & { ' $fragmentRefs'?: { 'RegularUserResponseFragment': RegularUserResponseFragment } }
+
+    
+      __typename?: 'UserResponse';
+      errors?: Array<{ __typename?: 'FieldError'; }> | null;
+      user?: { __typename?: 'User'; } | null;
+    
+  } };
 
 
   
@@ -181,10 +187,19 @@ export type RegisterMutationVariables = Exact<{
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register: (
-    { __typename?: 'UserResponse' }
-    & { ' $fragmentRefs'?: { 'RegularUserResponseFragment': RegularUserResponseFragment } }
-  ) };
+export type RegisterMutation = { __typename?: 'Mutation', register:
+  //  (
+
+  //   { __typename?: 'UserResponse' }
+  //   & { ' $fragmentRefs'?: { 'RegularUserResponseFragment': RegularUserResponseFragment } }
+  // ) 
+
+  {
+    __typename?: 'UserResponse';
+    errors?: Array<{ __typename?: 'FieldError'; }> | null;
+    user?: { __typename?: 'User'; } | null;
+  }
+};
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
     
@@ -303,6 +318,7 @@ export const PostsDocument = gql`
     createdAt
     updatedAt
     title
+    textSnippet
   }
 }
     `;
@@ -311,6 +327,7 @@ export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariable
   return Urql.useQuery<PostsQuery, PostsQueryVariables>({ query: PostsDocument, ...options });
 };
 
+
 export type CreatePostMutationVariables = Exact<{
   input: PostInput;
 }>;
@@ -318,10 +335,8 @@ export type CreatePostMutationVariables = Exact<{
 
 export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, text: string, points: number, creatorId: number } };
 
+export type PostsQuery = { __typename?: 'Query', posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string }> };
 
-
-
-export type PostsQuery = { __typename?: 'Query', posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string }> };
 
 
 export type PostsQueryVariables = Exact<{
