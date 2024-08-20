@@ -1,4 +1,10 @@
-insert into post (title, text, "creatorId", "createdAt") values ('Leviathan', 'Fusce consequat. Nulla nisl. Nunc nisl.
+import { MigrationInterface, QueryRunner } from "typeorm";
+
+export class FakePosts1723929741012 implements MigrationInterface {
+
+    public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`
+             insert into post (title, text, "creatorId", "createdAt") values ('Leviathan', 'Fusce consequat. Nulla nisl. Nunc nisl.
 
 Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.', 1, '2024-01-06T21:23:29Z');
 insert into post (title, text, "creatorId", "createdAt") values ('Out California Way', 'Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.
@@ -2660,7 +2666,7 @@ insert into post (title, text, "creatorId", "createdAt") values ('Italian Straw 
 
 Fusce consequat. Nulla nisl. Nunc nisl.', 1, '2023-10-17T13:57:16Z');
 insert into post (title, text, "creatorId", "createdAt") values ('Zatoichi''s Vengeance (Zatôichi no uta ga kikoeru) (Zatôichi 13)', 'Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.
-
+            
 Fusce consequat. Nulla nisl. Nunc nisl.
 
 Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.', 1, '2024-03-16T02:11:28Z');
@@ -2998,3 +3004,11 @@ Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.'
 insert into post (title, text, "creatorId", "createdAt") values ('Pariah', 'Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.
 
 Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.', 1, '2023-10-30T21:19:30Z');
+
+            `)
+    }
+
+    public async down(_: QueryRunner): Promise<void> {
+    }
+
+}

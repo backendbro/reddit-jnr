@@ -39,7 +39,7 @@ const main = async () => {
 
     try {
         await dataSource.initialize()
-        // await dataSource.runMigrations()
+        await dataSource.runMigrations()
     } catch (error) {
         console.error("Error during Data Source initialization", error)
     }

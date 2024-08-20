@@ -23,17 +23,11 @@ function betterUpdateQuery <Result, Query> (
         return undefined
       }
 
-      console.log(entityKey)
-      
-      
       const results: string[] = [] 
+
       fieldInfos.forEach(fi => {
         const key = cache.resolve(entityKey, fi.fieldKey) as string; 
-       
-
         const data = cache.resolve(key, 'posts') as string[];
-        
-        
         let _hasMore = cache.resolve(key, 'hasMore');
        
 
@@ -45,6 +39,7 @@ function betterUpdateQuery <Result, Query> (
         results.push(...data);
       })
 
+      console.log(results)
       return results  
     }
   } 
