@@ -30,6 +30,7 @@
     "react-is": "^18.3.1",
     "rxjs": "^7.8.1",
     "urql": "^4.1.0",
+    "uuid": "^10.0.0",
     "wonka": "^6.3.4"
   },
   "devDependencies": {

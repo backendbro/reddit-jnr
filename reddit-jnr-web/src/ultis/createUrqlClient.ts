@@ -1,6 +1,13 @@
-import {debugExchange, fetchExchange } from "urql";
+import {debugExchange, fetchExchange, stringifyVariables } from "urql";
 import {Resolver, Cache, QueryInput, cacheExchange} from "@urql/exchange-graphcache"
 import { LoginMutation, LogoutMutation, MeDocument, MeQuery, RegisterMutation } from "../generated/graphql";
+import { v4 as uuidv4 } from 'uuid';
+
+
+function handler() {
+  return uuidv4();
+}
+
 
 function betterUpdateQuery <Result, Query> (
   cache: Cache, 
@@ -11,9 +18,11 @@ function betterUpdateQuery <Result, Query> (
     return cache.updateQuery(qi, (data) => fn(result, data as any) as any)   
   }
 
-  const cursorPagination  = () : Resolver => {
+  const cursor  = () : Resolver => {
     return (_parent, fieldArgs, cache, info) => {
       
+      console.log(cache)
+
       const {parentKey: entityKey, fieldName } = info 
       const allFields = cache.inspectFields(entityKey) 
       const fieldInfos = allFields.filter((info) => info.fieldName === fieldName) 
@@ -23,24 +32,36 @@ function betterUpdateQuery <Result, Query> (
         return undefined
       }
 
-      const results: string[] = [] 
+    
+      const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`
+      const isItInTheCache = cache.resolve (
+        cache.resolve(entityKey, fieldKey) as string, 
+        "posts"
+      )
 
-      fieldInfos.forEach(fi => {
-        const key = cache.resolve(entityKey, fi.fieldKey) as string; 
+      info.partial = !isItInTheCache
+
+      let hasMore = true;
+      const results: string[] = [];
+
+      fieldInfos.forEach((fi) => {
+        const key = cache.resolve(entityKey, fi.fieldKey) as string;
         const data = cache.resolve(key, 'posts') as string[];
-        let _hasMore = cache.resolve(key, 'hasMore');
-       
+        const _hasMore = cache.resolve(key, 'hasMore') as boolean;
 
-        if (!_hasMore){
-           _hasMore = _hasMore as boolean;
-          
+        if (!_hasMore) {
+          hasMore = false;
         }
 
         results.push(...data);
-      })
+      });
 
-      console.log(results)
-      return results  
+
+      return  {
+        __typename: 'PaginatedPosts',
+      hasMore,
+      posts: results,
+      }  
     }
   } 
 
@@ -48,11 +69,12 @@ function betterUpdateQuery <Result, Query> (
 
 const cache = cacheExchange({
   keys:{
-    UserResponse: (data) => data.id || null as any  
+    UserResponse: (data) => data.id || null as any,
+    PaginatedPosts: () => null,
   }, 
-  resolver:{
+  resolvers:{
     Query: {
-      posts: cursorPagination() 
+      posts: cursor(),  
     }
   }, 
   updates:{
@@ -108,6 +130,7 @@ const cache = cacheExchange({
 
 
 
+
 export const createUrqlClient = (ssrExchange:any) => ({
     url: "http://localhost:4000/graphql",
     exchanges: [debugExchange, cache, ssrExchange, fetchExchange], 
@@ -115,4 +138,6 @@ export const createUrqlClient = (ssrExchange:any) => ({
       credentials:"include" as const 
     }
 })
+
+
 
