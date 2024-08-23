@@ -6,6 +6,8 @@ import { useCreatePostMutation, useMeQuery } from "../generated/graphql"
 import {useRouter} from "next/router" 
 import Layout from "../components/Layout"
 import { isAuth } from "../ultis/isAuth"
+import { withUrqlClient } from "next-urql"
+import { createUrqlClient } from "../ultis/createUrqlClient"
 
 const createPost: React.FC <{}> = ({}) => {
     const router = useRouter()
@@ -52,4 +54,5 @@ const createPost: React.FC <{}> = ({}) => {
     )
 }
 
-export default createPost
+
+export default withUrqlClient (createUrqlClient, {ssr:false})(createPost)
