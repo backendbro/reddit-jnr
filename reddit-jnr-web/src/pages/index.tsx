@@ -7,7 +7,7 @@ import { Box, Heading, Link, Stack, Text, Flex, Button } from "@chakra-ui/react"
 import { useState } from "react";
 
 const Index = () =>  {
-  const [variables, setVariables] = useState({limit: 40, cursor: null as null | string})
+  const [variables, setVariables] = useState({limit: 20, cursor: null as null | string})
   const [{data, fetching}] = usePostsQuery({
     variables 
   }) 
@@ -36,7 +36,8 @@ const Index = () =>  {
       {/* { data.posts.map((p) => <div key={p.id}> {p.title} </div> ) } */}
       { data.posts.posts.map((p) => 
          <Box key={p.id} p={5} shadow="md" borderWidth="1px">  
-         <Heading fontSize="xl" mt={4}> {p.title} </Heading>  {p.creator.username} 
+         <Heading fontSize="xl" mt={4}> {p.title} </Heading>  
+         <Text mb={3}> Posted by: {p.creator.username}</Text>
          <Text>{p.textSnippet}</Text> 
        </Box>
         ) }

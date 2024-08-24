@@ -18,7 +18,9 @@ const ForgotPassword: React.FC <{}> = ({}) => {
                     setComplete(true) 
                         }}>
                             {({isSubmitting}) => complete ? 
-                            <Box>If an account with that email exists, we sent an email</Box> : (
+                            <Box>Password Reset We have sent you an e-mail. 
+                                Please contact us if you do not receive it within a few minutes.
+                            </Box> : (
                                 <Form>
                                 <Box mt={4}>
                                     <InputField 

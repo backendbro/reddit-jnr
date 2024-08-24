@@ -79,6 +79,12 @@ const cache = cacheExchange({
   }, 
   updates:{
     Mutation:{
+      createPost: (_result, args, cache, info) => {
+        cache.invalidate("Query", "posts", {
+            limit: 20, 
+            cursor: null as null | string
+          })
+       }, 
       logout: (_result, args, cache, info) => {
         betterUpdateQuery<LogoutMutation,MeQuery>(
           cache, {query: MeDocument}, 
