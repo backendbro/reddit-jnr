@@ -16,6 +16,7 @@ import { buildSchema } from "type-graphql"
 import { PostResolver } from "./resolvers/post"
 import { HelloResolver } from "./resolvers/hello"
 import { UserResolver } from "./resolvers/user"
+import { VotingResolver } from "./resolvers/voting"
 
 
 import { Post } from "./entities/Post"
@@ -25,6 +26,7 @@ import { User } from "./entities/User"
 import path from "path"
 import { Updoot } from "./entities/Updoot"
  
+
 const main = async () => {
     
     const dataSource = new DataSource ({
@@ -86,7 +88,7 @@ const main = async () => {
 
     const apolloServer = new ApolloServer ({
         schema: await buildSchema({
-            resolvers:[HelloResolver, PostResolver, UserResolver], 
+            resolvers:[HelloResolver, PostResolver, UserResolver, VotingResolver], 
             validate:false
         }), 
         context: ({req,res}) => ({req,res, dataSource, client}),

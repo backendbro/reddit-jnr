@@ -323,12 +323,28 @@ export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __type
 export type PostsQueryVariables = Exact<{
       limit: Scalars['Int']['input'];
       cursor?: InputMaybe<Scalars['String']['input']>;
-    }>;
+}>;
     
     
-    export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, creator: { __typename?: 'User', id: number, username: string } }> } };
-    
+export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number, creator: { __typename?: 'User', id: number, username: string } }> } };
 
+export type VoteMutationVariables = Exact<{
+  value: Scalars['Int']['input'];
+  postId: Scalars['Int']['input'];
+}>;
+
+
+export type VoteMutation = { __typename?: 'Mutation', vote: boolean };
+
+export const VoteDocument = gql`
+    mutation Vote($value: Int!, $postId: Int!) {
+  vote(value: $value, postId: $postId)
+}
+    `;
+
+export function useVoteMutation() {
+  return Urql.useMutation<VoteMutation, VoteMutationVariables>(VoteDocument);
+};
 
 export const CreatePostDocument = gql`
     mutation CreatePost($input: PostInput!) {
@@ -360,6 +376,7 @@ export const PostsDocument = gql`
       updatedAt
       title
       textSnippet
+      points
       creator {
         id
         username

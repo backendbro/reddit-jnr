@@ -319,14 +319,36 @@ export type CreatePostMutationVariables = Exact<{
 
 export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, text: string, points: number, creatorId: number } };
 
-export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string }> } };
-
 
 export type PostsQueryVariables = Exact<{
-  limit: Scalars['Int']['input'];
-  cursor?: InputMaybe<Scalars['String']['input']>;
+      limit: Scalars['Int']['input'];
+      cursor?: InputMaybe<Scalars['String']['input']>;
 }>;
+    
+    
+// export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number, creator: { __typename?: 'User', id: number, username: string } }> } };
+export type PostSnippetFragment = { __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number, creator: { __typename?: 'User', id: number, username: string } } & { ' $fragmentName'?: 'PostSnippetFragment' };
 
+
+export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<(
+  { __typename?: 'Post' }
+  & { ' $fragmentRefs'?: { 'PostSnippetFragment': PostSnippetFragment } }
+)> } };
+
+export const PostSnippetFragmentDoc = gql`
+fragment PostSnippet on Post {
+id
+createdAt
+updatedAt
+title
+textSnippet
+points
+creator {
+id
+username
+}
+}
+`;
 
 export const CreatePostDocument = gql`
     mutation CreatePost($input: PostInput!) {
@@ -353,16 +375,11 @@ export const PostsDocument = gql`
   posts(limit: $limit, cursor: $cursor) {
     hasMore
     posts {
-      id
-      createdAt
-      updatedAt
-      title
-      textSnippet
+      ...PostSnippet
     }
   }
 }
-    `;
-
+    ${PostSnippetFragmentDoc}`;
 
 export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'>) {
   return Urql.useQuery<PostsQuery, PostsQueryVariables>({ query: PostsDocument, ...options });
