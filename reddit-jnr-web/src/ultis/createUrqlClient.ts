@@ -1,6 +1,6 @@
 import {debugExchange, fetchExchange, stringifyVariables } from "urql";
 import {Resolver, Cache, QueryInput, cacheExchange} from "@urql/exchange-graphcache"
-import { LoginMutation, LogoutMutation, MeDocument, MeQuery, RegisterMutation } from "../generated/graphql";
+import { LoginMutation, LogoutMutation, MeDocument, MeQuery, RegisterMutation, CreatePostMutation, PostsQuery} from "../generated/graphql";
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -21,8 +21,6 @@ function betterUpdateQuery <Result, Query> (
   const cursor  = () : Resolver => {
     return (_parent, fieldArgs, cache, info) => {
       
-      console.log(cache)
-
       const {parentKey: entityKey, fieldName } = info 
       const allFields = cache.inspectFields(entityKey) 
       const fieldInfos = allFields.filter((info) => info.fieldName === fieldName) 
@@ -81,10 +79,9 @@ const cache = cacheExchange({
     Mutation:{
       createPost: (_result, args, cache, info) => {
         cache.invalidate("Query", "posts", {
-            limit: 20, 
-            cursor: null as null | string
+            limit: 20
           })
-       }, 
+       },
       logout: (_result, args, cache, info) => {
         betterUpdateQuery<LogoutMutation,MeQuery>(
           cache, {query: MeDocument}, 
