@@ -1,7 +1,7 @@
 import {debugExchange, fetchExchange, stringifyVariables } from "urql";
 import {Resolver, Cache, QueryInput, cacheExchange} from "@urql/exchange-graphcache"
-import { LoginMutation, LogoutMutation, MeDocument, MeQuery, RegisterMutation, CreatePostMutation, PostsQuery} from "../generated/graphql";
-import { v4 as uuidv4 } from 'uuid';
+import { LoginMutation, LogoutMutation, MeDocument, MeQuery, RegisterMutation, CreatePostMutation, PostsQuery, VoteMutation, VoteMutationVariables} from "../generated/graphql";
+import gql from "graphql-tag"
 
 
 // function handler() {
@@ -77,6 +77,30 @@ const cache = cacheExchange({
   }, 
   updates:{
     Mutation:{
+      vote: (_result, args, cache, info) => {
+        const {postId, value} = args as VoteMutationVariables;
+        
+        const data = cache.readFragment(
+          gql `
+            fragment _ on Post {
+              id, 
+              points
+            }
+          `, {id: postId, points: value} 
+        )
+
+       
+        if (data) {
+          const newPoints = data.points + value  
+          cache.writeFragment(
+            gql`
+            fragment _ on Post {
+              id,
+              points 
+            }`, {id: postId, points: newPoints}
+          )
+        }
+      }, 
       createPost: (_result, args, cache, info) => {
         const allFields = cache.inspectFields("Query") 
         const fieldInfos = allFields.filter((info) => info.fieldName === "posts")

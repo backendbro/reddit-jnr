@@ -13,6 +13,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
+    "fragment PostSnippet on Post {\n  id\n  createdAt\n  updatedAt\n  title\n  textSnippet\n  points\n  creator {\n    id\n    username\n  }\n}": types.PostSnippetFragmentDoc,
     "fragment RegularError on FieldError {\n  field\n  message\n}": types.RegularErrorFragmentDoc,
     "fragment RegularUser on User {\n  id\n  username\n}": types.RegularUserFragmentDoc,
     "fragment RegularUserResponse on UserResponse {\n  errors {\n    ...RegularError\n  }\n  user {\n    ...RegularUser\n  }\n}": types.RegularUserResponseFragmentDoc,
@@ -24,7 +25,7 @@ const documents = {
     "mutation Register($options: UsernamePasswordInput!) {\n  register(options: $options) {\n    ...RegularUserResponse\n  }\n}": types.RegisterDocument,
     "mutation Vote($value: Int!, $postId: Int!) {\n  vote(value: $value, postId: $postId)\n}": types.VoteDocument,
     "query Me {\n  me {\n    errors {\n      field\n      message\n    }\n    user {\n      ...RegularUser\n    }\n  }\n}": types.MeDocument,
-    "query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    hasMore\n    posts {\n      id\n      createdAt\n      updatedAt\n      title\n      textSnippet\n      points\n      creator {\n        id\n        username\n      }\n    }\n  }\n}": types.PostsDocument,
+    "query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    hasMore\n    posts {\n      ...PostSnippet\n    }\n  }\n}": types.PostsDocument,
 };
 
 /**
@@ -41,6 +42,10 @@ const documents = {
  */
 export function graphql(source: string): unknown;
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "fragment PostSnippet on Post {\n  id\n  createdAt\n  updatedAt\n  title\n  textSnippet\n  points\n  creator {\n    id\n    username\n  }\n}"): (typeof documents)["fragment PostSnippet on Post {\n  id\n  createdAt\n  updatedAt\n  title\n  textSnippet\n  points\n  creator {\n    id\n    username\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -88,7 +93,7 @@ export function graphql(source: "query Me {\n  me {\n    errors {\n      field\n
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    hasMore\n    posts {\n      id\n      createdAt\n      updatedAt\n      title\n      textSnippet\n      points\n      creator {\n        id\n        username\n      }\n    }\n  }\n}"): (typeof documents)["query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    hasMore\n    posts {\n      id\n      createdAt\n      updatedAt\n      title\n      textSnippet\n      points\n      creator {\n        id\n        username\n      }\n    }\n  }\n}"];
+export function graphql(source: "query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    hasMore\n    posts {\n      ...PostSnippet\n    }\n  }\n}"): (typeof documents)["query Posts($limit: Int!, $cursor: String) {\n  posts(limit: $limit, cursor: $cursor) {\n    hasMore\n    posts {\n      ...PostSnippet\n    }\n  }\n}"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
