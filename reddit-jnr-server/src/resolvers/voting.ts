@@ -17,6 +17,7 @@ export class VotingResolver {
 
         const { userId } = req.session 
         
+        console.log({isUpdoot, userId})
         // const updoot = await Updoot.insert({ 
         //     userId, 
         //     postId, 

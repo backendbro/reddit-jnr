@@ -6,7 +6,7 @@ import { COOKIE_NAME, __prod__ } from "./constants"
 import express from "express"
 import session from "express-session" 
 import cors from "cors"
-import { createClient } from "redis"
+//import { createClient } from "redis"
 
 import {ApolloServer} from "apollo-server-express"
 import { InMemoryLRUCache } from '@apollo/utils.keyvaluecache';
@@ -21,17 +21,17 @@ import { VotingResolver } from "./resolvers/voting"
 
 import { Post } from "./entities/Post"
 import { User } from "./entities/User"
-
-//import {Redis} from "ioredis"
-import path from "path"
 import { Updoot } from "./entities/Updoot"
+
+import {Redis} from "ioredis"
+import path from "path"
  
 
 const main = async () => {
     
     const dataSource = new DataSource ({
         type:"postgres", 
-        database:'lilreddit2', 
+        database:'lilreddit3', 
         username:"postgres", 
         password:'islam123', 
         logging:true, 
@@ -41,7 +41,7 @@ const main = async () => {
     })
 
     try {
-        await dataSource.initialize()
+        await dataSource.initialize() 
         //await dataSource.runMigrations()
     } catch (error) {
         console.error("Error during Data Source initialization", error)
@@ -61,11 +61,11 @@ const main = async () => {
     const RedisStore = require("connect-redis").default;
 
     //Connect with local redis 
-    const client = await createClient()
-    await client.connect()
+    //const client = await createClient()
+    //await client.connect()
 
     // connect with unsplash redis 
-    //const client = new Redis(process.env.redisConnectionString || "");
+    const client = new Redis(process.env.redisConnectionString || "");
 
     app.use(
         session({
