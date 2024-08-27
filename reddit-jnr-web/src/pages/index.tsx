@@ -1,5 +1,5 @@
 import { withUrqlClient } from "next-urql";
-import { usePostsQuery } from "../generated/graphql";
+import { PostSnippetFragment, usePostsQuery } from "../generated/graphql";
 import { createUrqlClient } from "../ultis/createUrqlClient";
 import Layout from "../components/Layout";
 import NextLink from "next/link"
@@ -38,7 +38,7 @@ const Index = () =>  {
       <Stack spacing={8}>
 
       {/* { data.posts.map((p) => <div key={p.id}> {p.title} </div> ) } */}
-      { data.posts.posts.map((p) => 
+      { data.posts.posts.map((p: PostSnippetFragment) => 
 
         <Flex key={p.id} p={5} shadow="md" borderWidth="1px">
         
@@ -62,7 +62,7 @@ const Index = () =>  {
           <Button onClick={() => {
             setVariables({
               limit: variables.limit, 
-              cursor: data!.posts.posts[data.posts.posts.length - 1].createdAt 
+              cursor: (data!.posts.posts[data.posts.posts.length - 1] as PostSnippetFragment).createdAt 
             })
           }} isLoading={fetching} my={8}  mt={5} mb={5} display="block" mx="auto">load more</Button>
         </Flex>

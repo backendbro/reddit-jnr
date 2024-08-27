@@ -84,20 +84,26 @@ const cache = cacheExchange({
           gql `
             fragment _ on Post {
               id, 
-              points
+              points, 
+              voteStatus
             }
-          `, {id: postId, points: value} 
+          `, {id: postId, points: value, voteStatus: value}  
         )
 
        
         if (data) {
-          const newPoints = data.points + value  
+          if (data.voteStatus === value ) {
+            return
+          }
+
+          const newPoints = data.points + (!data.voteStatus ? 1: 2 *  value)  
           cache.writeFragment(
             gql`
             fragment _ on Post {
               id,
-              points 
-            }`, {id: postId, points: newPoints}
+              points, 
+              voteStatus 
+            }`, {id: postId, points: newPoints, voteStatus: value}
           )
         }
       }, 

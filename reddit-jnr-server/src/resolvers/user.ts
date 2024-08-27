@@ -37,7 +37,6 @@ export class UserResolver {
             return user.email 
         }
 
-
         return "";
     }
 

@@ -335,6 +335,7 @@ export const PostSnippetFragmentDoc = gql`
   updatedAt
   title
   textSnippet
+  voteStatus
   points
   creator {
     id
@@ -343,7 +344,7 @@ export const PostSnippetFragmentDoc = gql`
 }
     `;
 
-export type PostSnippetFragment = { __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, points: number, creator: { __typename?: 'User', id: number, username: string } } & { ' $fragmentName'?: 'PostSnippetFragment' };
+export type PostSnippetFragment = { __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string, voteStatus?: number | null, points: number, creator: { __typename?: 'User', id: number, username: string } } & { ' $fragmentName'?: 'PostSnippetFragment' };
 
 export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<(
   { __typename?: 'Post' }
@@ -391,15 +392,15 @@ export function useCreatePostMutation() {
 
 
 export const PostsDocument = gql`
-query Posts($limit: Int!, $cursor: String) {
-posts(limit: $limit, cursor: $cursor) {
-hasMore
-posts {
-  ...PostSnippet
+    query Posts($limit: Int!, $cursor: String) {
+  posts(limit: $limit, cursor: $cursor) {
+    hasMore
+    posts {
+      ...PostSnippet
+    }
+  }
 }
-}
-}
-${PostSnippetFragmentDoc}`;
+    ${PostSnippetFragmentDoc}`;
 
 export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'>) {
   return Urql.useQuery<PostsQuery, PostsQueryVariables>({ query: PostsDocument, ...options });

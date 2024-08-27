@@ -13,7 +13,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "fragment PostSnippet on Post {\n  id\n  createdAt\n  updatedAt\n  title\n  textSnippet\n  points\n  creator {\n    id\n    username\n  }\n}": types.PostSnippetFragmentDoc,
+    "fragment PostSnippet on Post {\n  id\n  createdAt\n  updatedAt\n  title\n  textSnippet\n  voteStatus\n  points\n  creator {\n    id\n    username\n  }\n}": types.PostSnippetFragmentDoc,
     "fragment RegularError on FieldError {\n  field\n  message\n}": types.RegularErrorFragmentDoc,
     "fragment RegularUser on User {\n  id\n  username\n}": types.RegularUserFragmentDoc,
     "fragment RegularUserResponse on UserResponse {\n  errors {\n    ...RegularError\n  }\n  user {\n    ...RegularUser\n  }\n}": types.RegularUserResponseFragmentDoc,
@@ -45,7 +45,7 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "fragment PostSnippet on Post {\n  id\n  createdAt\n  updatedAt\n  title\n  textSnippet\n  points\n  creator {\n    id\n    username\n  }\n}"): (typeof documents)["fragment PostSnippet on Post {\n  id\n  createdAt\n  updatedAt\n  title\n  textSnippet\n  points\n  creator {\n    id\n    username\n  }\n}"];
+export function graphql(source: "fragment PostSnippet on Post {\n  id\n  createdAt\n  updatedAt\n  title\n  textSnippet\n  voteStatus\n  points\n  creator {\n    id\n    username\n  }\n}"): (typeof documents)["fragment PostSnippet on Post {\n  id\n  createdAt\n  updatedAt\n  title\n  textSnippet\n  voteStatus\n  points\n  creator {\n    id\n    username\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
