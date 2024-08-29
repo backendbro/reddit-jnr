@@ -8,6 +8,10 @@ interface UpdootSectionProps {
 } 
  
 const UpdootSection: React.FC <UpdootSectionProps> = ({post}) => {
+
+    
+
+
     const [, vote] = useVoteMutation()
     const [loadingState, setLoadingState] = useState <"updoot-loading" | "downdoot-loading" | "not-loading"> ("not-loading")
 

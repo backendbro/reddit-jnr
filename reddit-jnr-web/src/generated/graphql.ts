@@ -169,6 +169,14 @@ export type ChangePasswordMutationVariables = Exact<{
 }>;
 
 
+export type DeletePostMutationVariables = Exact<{
+  id: Scalars['Int']['input'];
+}>;
+
+
+export type DeletePostMutation = { __typename?: 'Mutation', deletePost: boolean };
+
+
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -310,6 +318,12 @@ export function useMeQuery(options?: Omit<Urql.UseQueryArgs<MeQueryVariables>, '
 };
 
 
+export type PostQueryVariables = Exact<{
+  id: Scalars['Int']['input'];
+}>;
+
+
+export type PostQuery = { __typename?: 'Query', post?: { __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, text: string, voteStatus?: number | null, points: number, creator: { __typename?: 'User', id: number, username: string } } | null };
 
 
 export type CreatePostMutationVariables = Exact<{
@@ -404,4 +418,38 @@ export const PostsDocument = gql`
 
 export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'>) {
   return Urql.useQuery<PostsQuery, PostsQueryVariables>({ query: PostsDocument, ...options });
+};
+
+
+export const PostDocument = gql`
+    query Post($id: Int!) {
+  post(id: $id) {
+    id
+    createdAt
+    updatedAt
+    title
+    text
+    voteStatus
+    points
+    creator {
+      id
+      username
+    }
+  }
+}
+    `;
+
+export function usePostQuery(options: Omit<Urql.UseQueryArgs<PostQueryVariables>, 'query'>) {
+  return Urql.useQuery<PostQuery, PostQueryVariables>({ query: PostDocument, ...options });
+};
+
+
+export const DeletePostDocument = gql`
+    mutation DeletePost($id: Int!) {
+  deletePost(id: $id)
+}
+    `;
+
+export function useDeletePostMutation() {
+  return Urql.useMutation<DeletePostMutation, DeletePostMutationVariables>(DeletePostDocument);
 };

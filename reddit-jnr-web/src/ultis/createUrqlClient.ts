@@ -1,7 +1,9 @@
 import {debugExchange, fetchExchange, stringifyVariables } from "urql";
 import {Resolver, Cache, QueryInput, cacheExchange} from "@urql/exchange-graphcache"
-import { LoginMutation, LogoutMutation, MeDocument, MeQuery, RegisterMutation, CreatePostMutation, PostsQuery, VoteMutation, VoteMutationVariables} from "../generated/graphql";
+import { LoginMutation, LogoutMutation, MeDocument, MeQuery, RegisterMutation, CreatePostMutation, PostsQuery, VoteMutation, VoteMutationVariables, DeletePostMutationVariables} from "../generated/graphql";
 import gql from "graphql-tag"
+import { headers } from "next/headers";
+import { isServer } from "./isServer";
 
 
 // function handler() {
@@ -77,6 +79,10 @@ const cache = cacheExchange({
   }, 
   updates:{
     Mutation:{
+      deletePost:(_result, args, cache, info) => {
+        cache.invalidate({ __typename: "Post", id: (args as DeletePostMutationVariables).id})
+
+      }, 
       vote: (_result, args, cache, info) => {
         const {postId, value} = args as VoteMutationVariables;
         
@@ -103,7 +109,7 @@ const cache = cacheExchange({
               id,
               points, 
               voteStatus 
-            }`, {id: postId, points: newPoints, voteStatus: value}
+            }`, {id: postId, points: newPoints, voteStatus: newPoints}
           )
         }
       }, 
@@ -166,13 +172,25 @@ const cache = cacheExchange({
 
 
 
-export const createUrqlClient = (ssrExchange:any) => ({
+export const createUrqlClient = (ssrExchange:any, ctx: any) => { 
+   
+  let cookie = "" 
+  if (isServer()) {
+    cookie = ctx?.req.headers.cookie
+  }
+
+  return {
     url: "http://localhost:4000/graphql",
     exchanges: [debugExchange, cache, ssrExchange, fetchExchange], 
     fetchOptions:{
-      credentials:"include" as const 
+      credentials:"include" as const,
+      headers: cookie ? { 
+        cookie 
+      } : undefined
     }
-})
+  }
+
+}
 
 
 

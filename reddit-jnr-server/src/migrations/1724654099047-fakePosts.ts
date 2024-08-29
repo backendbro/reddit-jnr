@@ -4,6 +4,7 @@ export class FakePosts1724654099047 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query (`
+            
              insert into post (title, text, "creatorId", "createdAt") values ('Leviathan', 'Fusce consequat. Nulla nisl. Nunc nisl.
 
 Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.', 1, '2024-01-06T21:23:29Z');

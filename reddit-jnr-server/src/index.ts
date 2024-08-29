@@ -1,12 +1,12 @@
 require('dotenv').config()
 
 import "reflect-metadata"
-import { COOKIE_NAME, __prod__ } from "./constants"
+import { __prod__ } from "./constants"
 
 import express from "express"
 import session from "express-session" 
 import cors from "cors"
-//import { createClient } from "redis"
+import { createClient } from "redis"
 
 import {ApolloServer} from "apollo-server-express"
 import { InMemoryLRUCache } from '@apollo/utils.keyvaluecache';
@@ -23,7 +23,7 @@ import { Post } from "./entities/Post"
 import { User } from "./entities/User"
 import { Updoot } from "./entities/Updoot"
 
-import {Redis} from "ioredis"
+//import {Redis} from "ioredis"
 import path from "path"
  
 
@@ -38,7 +38,9 @@ const main = async () => {
         synchronize:false, 
         migrations:[path.join(__dirname, "./migrations/*")],
         entities: [Post, User, Updoot]         
-    })
+    }) 
+
+    
 
     try {
         await dataSource.initialize() 
@@ -61,25 +63,26 @@ const main = async () => {
     const RedisStore = require("connect-redis").default;
 
     //Connect with local redis 
-    //const client = await createClient()
-    //await client.connect()
+    const client = await createClient()
+    await client.connect()
 
     // connect with unsplash redis 
-    const client = new Redis(process.env.redisConnectionString || "");
+    //const client = new Redis(process.env.redisConnectionString || "");
 
     app.use(
         session({
-            name:COOKIE_NAME, 
+            name:"bid", 
             store: new RedisStore({
-                client
+                client,
+                disableTouch:false, 
+                ttl: 24 * 60 * 60
             }), 
             cookie:{
-                maxAge: 1000 * 60 * 60 * 24 * 365 * 1, // 1 year
-                httpOnly: true,
-                sameSite: "lax",
-                secure: false,
+                httpOnly:false, 
+                sameSite:"lax",
+                secure: false
             }, 
-            secret: process.env.sessionSecret || "", 
+            secret: "t4t3t3tg432v342242#$@#@$@#@$", 
             resave:false, 
             saveUninitialized:true
         }) 

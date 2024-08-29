@@ -2,11 +2,12 @@ import { User } from "../entities/User";
 import { MyContext } from "src/types";
 import { Ctx, Resolver, Arg, Mutation, Field, ObjectType, Query, FieldResolver, Root } from "type-graphql";
 import argon2 from "argon2"
-import { COOKIE_NAME, FORGOT_PASSWORD_PREFIX } from "../constants";
+import { FORGOT_PASSWORD_PREFIX } from "../constants";
 import { UsernamePasswordInput } from "../ultis/UsernamePasswordInput";
 import { validateRegister } from "../ultis/validateRegister";
 import {v4} from "uuid"
 import { sendEmail } from "../ultis/sendEmail";
+import {serialize } from "cookie"
 
 @ObjectType() 
 class FieldError {
@@ -88,7 +89,6 @@ export class UserResolver {
         
         await client.del(key) 
         req.session.userId = user.id 
-        
         return { user } 
     }
 
@@ -114,6 +114,19 @@ export class UserResolver {
         await sendEmail(email, `<a href="http://localhost:3000/change-password/${token}">Forgot password</a>`)
         return true 
     }
+
+
+
+
+
+
+
+
+
+    
+
+
+
 
 
     @Mutation(() => UserResponse) 
@@ -200,7 +213,9 @@ export class UserResolver {
         }
     }
 
+   
     req.session.userId = user.id
+   
     return {user}
 }  
 
@@ -211,7 +226,6 @@ async me(
 ) : Promise<UserResponse>{
 
     const userId = req.session.userId
-
     if (!userId) {
         return {
             errors:[{
@@ -236,13 +250,27 @@ async me(
 
     @Mutation (() => Boolean) 
     logout(
-        @Ctx(){req, res}:MyContext
+        @Ctx(){req,res}:MyContext
     ){
+        // try {
+            
+        //     res.setHeader('Set-Cookie', serialize('bid', '', {
+        //         httpOnly: true,
+        //         secure: process.env.NODE_ENV === 'production', // Set to true in production
+        //         expires: new Date(0), // Expire immediately
+        //         path: '/' // Path should match the path used to set the cookie
+        //       }));
+        //       return true 
+        // } catch (error) {
+        //     return false 
+        // }
+
+        //   return true 
 
         return new Promise ( resolve => {
             try {
                 req.session = null 
-                res.clearCookie(COOKIE_NAME)
+                res.clearCookie("bid")
                 resolve(true)
             } catch (error) {
                     console.log(error) 
