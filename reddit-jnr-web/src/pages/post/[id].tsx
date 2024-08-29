@@ -1,27 +1,14 @@
 import React from "react" 
 import { createUrqlClient } from "../../ultis/createUrqlClient"
 import { withUrqlClient } from "next-urql"
-import { useRouter } from "next/router"
-import { Box, Heading, Link, Stack, Text, Flex, Button, Icon, IconButton } from "@chakra-ui/react";
+import { Box, Heading, Stack, Text, Flex } from "@chakra-ui/react";
 import Layout from "../../components/Layout"
-import { usePostQuery } from "../../generated/graphql";
+import useGetPostFromUrl from "../../ultis/getSinglePost";
+import EditPostButtons from "../../components/EditPostButtons";
 
-// interface Props {
-//     post: PostQuery["post"]
-// } 
 
 const Post: React.FC = ({}) => {
-    const router = useRouter()
-    const {id} = router.query
-    
-    const intId = typeof id === "string" ? parseInt(id) : -1 
-
-    const [{data, error, fetching}] = usePostQuery({
-        pause: intId == -1, 
-        variables : {
-            id: intId 
-        }
-    })
+    const [{data, error, fetching}] = useGetPostFromUrl() 
 
     if (error) {
         return <div>{error.message}</div>
@@ -55,7 +42,8 @@ const Post: React.FC = ({}) => {
                             {data.post.title}
                         </Heading> 
 
-                    <Text>{data.post.text}</Text>
+                    <Text mb={3}>{data.post.text}</Text>
+                    <EditPostButtons id={data.post.id} creatorId={data.post.creator.id} />
                     </Box>
                     
                 </Flex>

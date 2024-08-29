@@ -383,6 +383,17 @@ export function useVoteMutation() {
   return Urql.useMutation<VoteMutation, VoteMutationVariables>(VoteDocument);
 };
 
+
+export type UpdatePostMutationVariables = Exact<{
+  id: Scalars['Int']['input'];
+  title: Scalars['String']['input'];
+  text: Scalars['String']['input'];
+}>;
+
+
+export type UpdatePostMutation = { __typename?: 'Mutation', updatePost?: { __typename?: 'Post', id: number, title: string, text: string, textSnippet: string } | null };
+
+
 export const CreatePostDocument = gql`
     mutation CreatePost($input: PostInput!) {
   createPost(input: $input) {
@@ -402,9 +413,6 @@ export function useCreatePostMutation() {
 };
 
 
-
-
-
 export const PostsDocument = gql`
     query Posts($limit: Int!, $cursor: String) {
   posts(limit: $limit, cursor: $cursor) {
@@ -415,6 +423,7 @@ export const PostsDocument = gql`
   }
 }
     ${PostSnippetFragmentDoc}`;
+
 
 export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'>) {
   return Urql.useQuery<PostsQuery, PostsQueryVariables>({ query: PostsDocument, ...options });
@@ -452,4 +461,22 @@ export const DeletePostDocument = gql`
 
 export function useDeletePostMutation() {
   return Urql.useMutation<DeletePostMutation, DeletePostMutationVariables>(DeletePostDocument);
+};
+
+
+
+export const UpdatePostDocument = gql`
+    mutation UpdatePost($id: Int!, $title: String!, $text: String!) {
+      updatePost(id: $id, title: $title, text: $text) {
+        id
+        title
+        text
+        textSnippet
+      }
+}
+    `;
+
+
+export function useUpdatePostMutation() {
+  return Urql.useMutation<UpdatePostMutation, UpdatePostMutationVariables>(UpdatePostDocument);
 };

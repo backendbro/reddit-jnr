@@ -2,13 +2,7 @@ import {debugExchange, fetchExchange, stringifyVariables } from "urql";
 import {Resolver, Cache, QueryInput, cacheExchange} from "@urql/exchange-graphcache"
 import { LoginMutation, LogoutMutation, MeDocument, MeQuery, RegisterMutation, CreatePostMutation, PostsQuery, VoteMutation, VoteMutationVariables, DeletePostMutationVariables} from "../generated/graphql";
 import gql from "graphql-tag"
-import { headers } from "next/headers";
 import { isServer } from "./isServer";
-
-
-// function handler() {
-//   return uuidv4();
-// }
 
 
 function betterUpdateQuery <Result, Query> (
@@ -19,6 +13,7 @@ function betterUpdateQuery <Result, Query> (
 ) {
     return cache.updateQuery(qi, (data) => fn(result, data as any) as any)   
   }
+
 
   const cursor  = () : Resolver => {
     return (_parent, fieldArgs, cache, info) => {
@@ -176,7 +171,7 @@ export const createUrqlClient = (ssrExchange:any, ctx: any) => {
    
   let cookie = "" 
   if (isServer()) {
-    cookie = ctx?.req.headers.cookie
+    cookie = ctx?.req?.headers?.cookie
   }
 
   return {
