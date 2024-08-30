@@ -2,6 +2,7 @@ import { MyContext } from "src/types";
 import { Post } from "../entities/Post";
 import {Query, Resolver, Arg, Mutation, Ctx, Field, InputType, UseMiddleware, Int, Root, FieldResolver, ObjectType } from "type-graphql";
 import { isAuth } from "../middleware/isAuth";
+import { User } from "../entities/User";
 
 @InputType() 
 class PostInput {
@@ -25,52 +26,60 @@ class PaginatedPosts {
 export class PostResolver {
 
     @FieldResolver(() => String)
-    textSnippet( @Root() root: Post ) 
-    {
+    textSnippet( @Root() root: Post ) { 
         return root.text.slice(0, 50)
     } 
+
+    @FieldResolver(() => User) 
+    creator (
+        @Root() post: Post, 
+        @Ctx() {userLoader}: MyContext
+    )
+        {
+             
+        return userLoader.load(post.creatorId)
+    }
+
+
+    @FieldResolver(() => Int, {nullable: true}) 
+    async voteStatus (
+        @Root () post: Post, 
+        @Ctx() {updootLoader, req}: MyContext 
+    ) {
+        if (!req.session.userId) {
+            return null 
+        }
+        const updoot = await updootLoader.load({postId: post.id, userId: req.session.userId}) 
+        return updoot ? updoot.value : null 
+        } 
 
 
     @Query(() => PaginatedPosts)
     async posts (
         @Arg ("limit", () => Int) limit: number, 
         @Arg ("cursor", () => String, {nullable:true}) cursor: string | null,  
-        @Ctx() {dataSource, req}: MyContext 
+        @Ctx() {dataSource}: MyContext 
     ) : Promise<PaginatedPosts> {
 
         const realLimit = Math.min(50, limit)
         const realLimitPlusOne = Math.min(50, limit) + 1
         const replacements: any[] = [realLimitPlusOne] 
         
-        const userId = req.session.userId 
-        if (userId) {
-            replacements.push(userId)
-        }
-        let cursorIndex = 3
+       
         if (cursor) {
             replacements.push(new Date(parseInt(cursor)))
-            cursorIndex = replacements.length
         }
 
         const posts = await dataSource.query (` 
             SELECT 
-            p.*, 
-            u.username,
-            json_build_object(
-                'id', u.id,
-                'username', u.username,
-                'email', u.email,
-                'createdAt', u."createdAt",
-                'updatedAt', u."updatedAt"
-            ) AS creator,
-            ${userId ? '(select value from updoot where "userId" = $2 and "postId" = p.id) AS "voteStatus"' : 'null AS "voteStatus"'}
+            p.*
             FROM 
                 post p
             INNER JOIN 
                 public.user u 
             ON 
                 u.id = p."creatorId"
-                ${cursor ? `where p."createdAt" < $${cursorIndex}` : ""}
+                ${cursor ? `where p."createdAt" < $2` : ""}
             ORDER BY 
                 p."createdAt" DESC
             LIMIT $1;

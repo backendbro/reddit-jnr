@@ -25,6 +25,8 @@ import { Updoot } from "./entities/Updoot"
 
 //import {Redis} from "ioredis"
 import path from "path"
+import { createUserLoader } from "./ultis/createUserLoader"
+import { createUpdootLoader } from "./ultis/createUpdootLoader"
  
 
 const main = async () => {
@@ -94,7 +96,14 @@ const main = async () => {
             resolvers:[HelloResolver, PostResolver, UserResolver, VotingResolver], 
             validate:false
         }), 
-        context: ({req,res}) => ({req,res, dataSource, client}),
+        context: ({req,res}) => ({
+            req, 
+            res, 
+            dataSource, 
+            client,
+            userLoader: createUserLoader(), 
+            updootLoader: createUpdootLoader() 
+        }),
         cache: new InMemoryLRUCache({ // to prevent DOS attacks.
             maxSize: Math.pow(2, 20) * 100,
             ttl: 300,

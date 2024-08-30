@@ -7,7 +7,6 @@ import { UsernamePasswordInput } from "../ultis/UsernamePasswordInput";
 import { validateRegister } from "../ultis/validateRegister";
 import {v4} from "uuid"
 import { sendEmail } from "../ultis/sendEmail";
-import {serialize } from "cookie"
 
 @ObjectType() 
 class FieldError {
@@ -114,19 +113,6 @@ export class UserResolver {
         await sendEmail(email, `<a href="http://localhost:3000/change-password/${token}">Forgot password</a>`)
         return true 
     }
-
-
-
-
-
-
-
-
-
-    
-
-
-
 
 
     @Mutation(() => UserResponse) 
