@@ -8,13 +8,13 @@ import EditPostButtons from "../../components/EditPostButtons";
 
 
 const Post: React.FC = ({}) => {
-    const [{data, error, fetching}] = useGetPostFromUrl() 
+    const {data, error, loading} = useGetPostFromUrl() 
 
     if (error) {
         return <div>{error.message}</div>
     }
 
-    if (fetching) {
+    if (loading) {
         return (
             <Layout>
                 <div> Loading... </div>
@@ -53,5 +53,5 @@ const Post: React.FC = ({}) => {
     )
 }
 
-export default withUrqlClient(createUrqlClient, {ssr:true})(Post) 
+export default Post
 

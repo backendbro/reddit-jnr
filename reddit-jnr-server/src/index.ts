@@ -53,6 +53,7 @@ const main = async () => {
     
 
     const app = express()
+    app.set("trust proxy", 1)
     app.use(cors({
         origin:["https://studio.apollographql.com", "http://localhost:3000"],
         credentials:true
@@ -80,9 +81,10 @@ const main = async () => {
                 ttl: 24 * 60 * 60
             }), 
             cookie:{
-                httpOnly:false, 
+                httpOnly:true, 
                 sameSite:"lax",
-                secure: false
+                secure: false, 
+                //domain: __prod__? ".codeponder.com" : undefined
             }, 
             secret: "t4t3t3tg432v342242#$@#@$@#@$", 
             resave:false, 

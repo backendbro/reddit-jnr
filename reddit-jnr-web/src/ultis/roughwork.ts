@@ -424,6 +424,7 @@ export const PostsDocument = gql`
 }
     ${PostSnippetFragmentDoc}`;
 
+
 export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'>) {
   return Urql.useQuery<PostsQuery, PostsQueryVariables>({ query: PostsDocument, ...options });
 };

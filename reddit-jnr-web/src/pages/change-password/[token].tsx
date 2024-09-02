@@ -5,22 +5,18 @@ import { Link, Flex } from "@chakra-ui/react"
 import Wrapper from '../../components/Wrapper';
 import InputField from '../../components/InputField';
 import { Button } from '@chakra-ui/button';
-import { FieldError, RegularUserResponseFragment, useChangePasswordMutation } from "../../generated/graphql"
+import { RegularUserResponseFragment, useChangePasswordMutation } from "../../generated/graphql"
 import { toErrorMap } from '../../ultis/toErrorMap';
 import NextLink from "next/link"
 import { useRouter } from 'next/router';
 import { useState } from "react";
 import { transformErrors } from "../../ultis/trasformer";
 
-//import { createUrqlClient } from "../../ultis/createUrqlClient";
-//import { withUrqlClient } from "next-urql";
-
 
 const ChangePassword: NextPage<{token:string}> = () => {
     const router = useRouter() 
 
-    console.log(router.query.token)
-    const [, changePassword] = useChangePasswordMutation() 
+    const [changePassword] = useChangePasswordMutation() 
     const [tokenError, setTokenError] = useState('') 
       
     return (
@@ -28,10 +24,10 @@ const ChangePassword: NextPage<{token:string}> = () => {
             <Wrapper variant='small'>
 
                 <Formik initialValues={{newPassword:""}} onSubmit={ async (values, {setErrors}) => {
-                    const response = await changePassword({
+                    const response = await changePassword({ variables: {
                         newPassword: values.newPassword, 
                         token: router.query.token === "string" ? router.query.token : ""  
-                    }) 
+                }}) 
                 
                     if((response.data?.changePassword as RegularUserResponseFragment).errors) {  
 
@@ -94,11 +90,5 @@ const ChangePassword: NextPage<{token:string}> = () => {
     )
 }
 
-// ChangePassword.getInitialProps = ({query}) => {
-//     return {
-//         token: query.token as string 
-//     }
-// }
 
 export default ChangePassword 
-//export default withUrqlClient (createUrqlClient, {ssr:true})(ChangePassword)

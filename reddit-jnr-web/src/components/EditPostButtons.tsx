@@ -9,8 +9,8 @@ interface EditPostButtonProps {
 }
 
 const EditPostButtons: React.FC <EditPostButtonProps> = ({id, creatorId}) => {
-    const [{data: MeData}] = useMeQuery() 
-    const [, deletePost] = useDeletePostMutation()
+    const {data: MeData} = useMeQuery() 
+    const [deletePost] = useDeletePostMutation()
     
     if ( MeData?.me?.user?.id !== creatorId  ) {
         return null 
@@ -33,7 +33,7 @@ const EditPostButtons: React.FC <EditPostButtonProps> = ({id, creatorId}) => {
                       icon={<DeleteIcon />} 
                       aria-label="Delete Post" 
                       onClick={() => {
-                        deletePost({ id })
+                        deletePost({ variables: { id }})
                       }}/>
 
                 </Box>  

@@ -18,7 +18,7 @@ interface loginProps {}
 export const Login: React.FC<loginProps> = () => {
     const router = useRouter()
 
-    const [,login] =  useLoginMutation() 
+    const [login] =  useLoginMutation() 
 
     const transformErrors = (errors: Array<{ __typename?: "FieldError"; field?: string; message?: string }> | null): FieldError[] => {
   
@@ -38,8 +38,9 @@ export const Login: React.FC<loginProps> = () => {
 
 
             <Formik initialValues={{usernameOrEmail:"", password:""}} onSubmit={ async (values, {setErrors}) => {
-            
-                const response = await login(values)
+                const response = await login({
+                    variables: values 
+                }) 
             
 
                 const errors =  (response.data?.login as RegularUserResponseFragment).errors
@@ -100,4 +101,4 @@ export const Login: React.FC<loginProps> = () => {
 }
 
 //export default Login
-export default withUrqlClient(createUrqlClient) (Login)
+export default Login

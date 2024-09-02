@@ -13,10 +13,10 @@ const EditPost = () => {
     const router = useRouter()
     const intId = useGetIntId() 
 
-    const [{data, error, fetching}] = useGetPostFromUrl() 
-    const [,updatePost] = useUpdatePostMutation()
+    const {data, loading} = useGetPostFromUrl() 
+    const [updatePost] = useUpdatePostMutation()
     
-    if (fetching) {
+    if (loading) {
         return (
             <Layout>
                 <Box>Loading...</Box>
@@ -37,7 +37,7 @@ const EditPost = () => {
     
     
             <Formik initialValues={{title:data.post.title, text:data.post.text}} onSubmit={ async (values, {setErrors}) => {
-                await updatePost({id: intId, ...values}) 
+                await updatePost({variables: {id: intId, ...values}}) 
                 router.back()
             }}>
                 {({isSubmitting}) => (

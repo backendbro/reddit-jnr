@@ -61,6 +61,17 @@ function betterUpdateQuery <Result, Query> (
   } 
 
 
+function invalidateAllPosts(cache:Cache) {
+  const allFields = cache.inspectFields("Query") 
+  const fieldInfos = allFields.filter((info) => {
+    info.fieldName === "posts" 
+  })
+
+  fieldInfos.forEach((fi) => {
+    cache.invalidate("Query", "posts", fi.arguments || null)
+  })
+}
+
 
 const cache = cacheExchange({
   keys:{
@@ -109,11 +120,7 @@ const cache = cacheExchange({
         }
       }, 
       createPost: (_result, args, cache, info) => {
-        const allFields = cache.inspectFields("Query") 
-        const fieldInfos = allFields.filter((info) => info.fieldName === "posts")
-        fieldInfos.forEach((fi) => {
-          cache.invalidate("Query", "posts", fi.arguments || {})
-        })
+          invalidateAllPosts(cache)
        },
       logout: (_result, args, cache, info) => {
         betterUpdateQuery<LogoutMutation,MeQuery>(
@@ -130,17 +137,17 @@ const cache = cacheExchange({
           (result, query) => {
             if (result.login.errors) {
               return query
-            }else{
-              return { 
+            } else{
+              return { me: {
+                user: result.login.user
+              } as MeQuery['me'] }
                 
-                me: {
-                  user: result.login.user
-                } as MeQuery['me']
                 
-              }
+              
             }
           }
-        )
+        ) 
+        invalidateAllPosts(cache)
       }, 
       register: (_result, args, cache, info) => {
         betterUpdateQuery<RegisterMutation, MeQuery>(

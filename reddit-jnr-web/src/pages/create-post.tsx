@@ -13,20 +13,18 @@ const createPost: React.FC <{}> = ({}) => {
     const router = useRouter()
     isAuth() 
     
-    const [, createPost] = useCreatePostMutation()
+    const [createPost] = useCreatePostMutation()
     return (
         <Layout variant='small'>
 
 
         <Formik initialValues={{title:"", text:""}} onSubmit={ async (values, {setErrors}) => {
-            const {error} = await createPost({input:values})
+            const {errors} = await createPost({variables: { input:values} })
 
-            if (error?.message.includes("not authenticated")){
-                setErrors ({title:" ", text: error.message}) 
-                router.replace("/login")
+            if (!errors){
+                router.push("/") 
             } 
 
-            router.push("/") 
 
         }}>
             {({isSubmitting}) => (

@@ -1,29 +1,34 @@
 import { Box, Button, Link, Flex, Heading } from "@chakra-ui/react"
 import NextLink from "next/link"
 import { useMeQuery, useLogoutMutation } from "../generated/graphql"
-import { withUrqlClient } from "next-urql"
-import { createUrqlClient } from "../ultis/createUrqlClient"
+import {useRouter} from "next/router"
+import { isServer } from "../ultis/isServer"
+import { useApolloClient } from "@apollo/client";
 
 
-interface NavBarProps {}
+export const NavBar: React.FC = ({ }) => {
+  
+  const router = useRouter() 
+  
+  const {data, loading} = useMeQuery({
+    skip: isServer()  
+  })
+  
+  const [logout, {loading:logoutFectching, error }] = useLogoutMutation();
+  const apolloClient = useApolloClient() 
 
-export const NavBar: React.FC<NavBarProps> = ({ }) => {
-  const [{data, fetching}] = useMeQuery({})
+  // const handleLogout = async () => {
+  //   try {
+  //       await logout({});
 
-  const [{ fetching:logoutFectching, error }, logout] = useLogoutMutation();
-
-  const handleLogout = async () => {
-    try {
-        await logout({});
-
-    } catch (err) {
+  //   } catch (err) {
       
-        console.error(err);
-    }
-  };
+  //       console.error(err);
+  //   }
+  // };
   
   let body = null 
-  if (fetching) {
+  if (loading) {
     body = null    
   } else if (!data?.me?.user?.username) {
      body = (<> 
@@ -54,7 +59,12 @@ export const NavBar: React.FC<NavBarProps> = ({ }) => {
 
         <Box ml={3} mr={3}>{data?.me?.user?.username} </Box> 
         <Button variant={"link"} isLoading={logoutFectching} onClick = {
-          handleLogout
+
+       async () => {
+        await logout()
+        await apolloClient.resetStore()
+       }
+
         }> logout </Button>
     </Flex>
   } 
@@ -76,4 +86,4 @@ export const NavBar: React.FC<NavBarProps> = ({ }) => {
 }
 
 //export default NavBar
-export default withUrqlClient(createUrqlClient, {ssr:true}) ( NavBar )
+export default  NavBar
