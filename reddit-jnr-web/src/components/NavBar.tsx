@@ -17,15 +17,6 @@ export const NavBar: React.FC = ({ }) => {
   const [logout, {loading:logoutFectching, error }] = useLogoutMutation();
   const apolloClient = useApolloClient() 
 
-  // const handleLogout = async () => {
-  //   try {
-  //       await logout({});
-
-  //   } catch (err) {
-      
-  //       console.error(err);
-  //   }
-  // };
   
   let body = null 
   if (loading) {

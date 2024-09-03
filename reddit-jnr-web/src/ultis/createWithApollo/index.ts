@@ -1,3 +1,4 @@
-import withApollo from "./withApollo";
+import withApollo, {createApolloClient} from "./withApollo";
 
-export { withApollo };
+
+export { withApollo, createApolloClient};

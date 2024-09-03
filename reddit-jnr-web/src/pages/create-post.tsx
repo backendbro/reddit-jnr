@@ -21,7 +21,7 @@ const createPost: React.FC <{}> = ({}) => {
 
         <Formik initialValues={{title:"", text:""}} onSubmit={ async (values, {setErrors}) => {
             const {errors} = await createPost({variables: { input:values}, update: (cache) => {
-                cache.evict({fieldName:"posts"})
+                cache.evict({fieldName:"posts"}) 
             } })
 
             if (!errors){
