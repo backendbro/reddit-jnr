@@ -1,5 +1,3 @@
-import { withUrqlClient } from "next-urql"
-import { createUrqlClient } from "../../../ultis/createUrqlClient"
 import { Box, Button } from "@chakra-ui/react"
 import { Formik, Form } from "formik"
 import InputField from "../../../components/InputField"
@@ -8,6 +6,7 @@ import useGetPostFromUrl from "../../../ultis/getSinglePost"
 import { useUpdatePostMutation } from "../../../generated/graphql"
 import useGetIntId from "../../../ultis/useGetIntId"
 import { useRouter } from "next/router"
+import { createWithAp } from "../../../ultis/withApollo"
 
 const EditPost = () => {
     const router = useRouter()
@@ -65,4 +64,4 @@ const EditPost = () => {
         )
 }
 
-export default withUrqlClient(createUrqlClient)(EditPost)
+export default createWithAp({ssr:false})(EditPost)

@@ -6,11 +6,13 @@ import { Link, Flex } from "@chakra-ui/react"
 import Wrapper from '../components/Wrapper';
 import InputField from '../components/InputField';
 import { Button } from '@chakra-ui/button';
-import { FieldError, RegularUserResponseFragment, useLoginMutation } from "../generated/graphql"
+import { FieldError, MeDocument, RegularUserResponseFragment, useLoginMutation } from "../generated/graphql"
 import { toErrorMap } from '../ultis/toErrorMap';
 import { useRouter } from 'next/router';
 import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../ultis/createUrqlClient';
+import { createWithAp } from '../ultis/withApollo';
+import { MeQuery } from '../generated/types';
 
 
 interface loginProps {}
@@ -39,7 +41,19 @@ export const Login: React.FC<loginProps> = () => {
 
             <Formik initialValues={{usernameOrEmail:"", password:""}} onSubmit={ async (values, {setErrors}) => {
                 const response = await login({
-                    variables: values 
+                    variables: values, 
+                    update: (cache, {data}) => {
+                        cache.writeQuery<MeQuery> ({
+                            query: MeDocument, 
+                            data: {
+                                __typename: "Query", 
+                                me: {
+                                    __typename:"UserResponse", 
+                                    user: data.login.user 
+                                }
+                            }
+                        })
+                    }
                 }) 
             
 
@@ -100,5 +114,4 @@ export const Login: React.FC<loginProps> = () => {
         );
 }
 
-//export default Login
-export default Login
+export default createWithAp({ssr:false})(Login)

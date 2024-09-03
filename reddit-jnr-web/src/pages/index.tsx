@@ -5,7 +5,7 @@ import Layout from "../components/Layout";
 import UpdootSection from "../components/UpdootSection";
 import { PostSnippetFragment, usePostsQuery } from "../generated/graphql";
 import { isServer } from "../ultis/isServer";
-import { PostsQuery } from "../generated/types";
+import { createWithAp } from "../ultis/withApollo";
 
 const Index = () =>  {
   const {data, loading, fetchMore, variables} = usePostsQuery({
@@ -13,7 +13,8 @@ const Index = () =>  {
     variables: {
       limit: 20, 
       cursor: null as null | string
-    }
+    }, 
+    notifyOnNetworkStatusChange: true 
   }) 
 
   if (!loading && !data){
@@ -68,20 +69,6 @@ const Index = () =>  {
               variables: {
                 limit: variables?.limit, 
                 cursor: (data!.posts.posts[data.posts.posts.length - 1] as PostSnippetFragment).createdAt 
-              }, 
-              updateQuery: (previousValue, {fetchMoreResult}): PostsQuery => {
-                if (!fetchMoreResult) {
-                  return previousValue 
-                }
-
-                return {
-                  __typename: "Query", 
-                  posts: {
-                    __typename: "PaginatedPosts", 
-                    hasMore: fetchMoreResult.posts.hasMore, 
-                    posts: [...previousValue.posts.posts, ...fetchMoreResult.posts.posts]
-                  } 
-                }
               }
             })
             
@@ -91,4 +78,4 @@ const Index = () =>  {
   </Layout>
 )};
 
-export default Index
+export default createWithAp({ssr:true})(Index)

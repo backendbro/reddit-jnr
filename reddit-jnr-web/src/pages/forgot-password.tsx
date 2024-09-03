@@ -5,7 +5,8 @@ import InputField from '../components/InputField'
 import Wrapper from '../components/Wrapper'
 import { useForgotPasswordMutation } from '../generated/graphql'
 import { useState } from 'react'
- 
+import { createWithAp } from '../ultis/withApollo' 
+
 const ForgotPassword: React.FC <{}> = ({}) => {
     const [forgotPassword] = useForgotPasswordMutation() 
     const [complete, setComplete] = useState(false)     
@@ -39,4 +40,4 @@ const ForgotPassword: React.FC <{}> = ({}) => {
     )
 }
 
-export default ForgotPassword
+export default createWithAp({ssr: false}) (ForgotPassword)

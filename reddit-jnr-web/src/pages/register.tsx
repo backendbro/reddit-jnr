@@ -14,18 +14,32 @@ import { toErrorMap } from '../ultis/toErrorMap';
 import { createUrqlClient } from '../ultis/createUrqlClient';
 import { transformErrors } from '../ultis/trasformer';
 
+import { createWithAp } from '../ultis/withApollo';
+import { MeDocument, MeQuery } from '../generated/types';
+
 interface registerProps {}
 
 export const Register: React.FC<registerProps> = () => {
     const router = useRouter()
 
-    const [,register] =  useRegisterMutation()
+    const [register] =  useRegisterMutation()
         return (
         <Wrapper variant='small'>
 
 
             <Formik initialValues={{username:"", email:"", password:""}} onSubmit={ async (values, {setErrors}) => {
-                const response = await register({options: values})
+                const response = await register({ variables: { options: values }, update:(cache, {data}) => {
+                    cache.writeQuery<MeQuery>({
+                        query: MeDocument, 
+                        data: {
+                            __typename:"Query", 
+                            me:{ 
+                                __typename: "UserResponse",
+                                user: data?.register.user
+                            }
+                        }
+                    })
+                } })
               
                 if ( (response.data?.register as RegularUserResponseFragment).errors)  {
 
@@ -73,6 +87,6 @@ export const Register: React.FC<registerProps> = () => {
             </Wrapper>
         );
 }
-export default withUrqlClient (createUrqlClient) (Register)
+export default createWithAp ({ssr:false}) (Register)
 
 

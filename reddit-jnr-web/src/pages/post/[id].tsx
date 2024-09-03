@@ -1,10 +1,9 @@
 import React from "react" 
-import { createUrqlClient } from "../../ultis/createUrqlClient"
-import { withUrqlClient } from "next-urql"
 import { Box, Heading, Stack, Text, Flex } from "@chakra-ui/react";
 import Layout from "../../components/Layout"
 import useGetPostFromUrl from "../../ultis/getSinglePost";
 import EditPostButtons from "../../components/EditPostButtons";
+import { createWithAp } from "../../ultis/withApollo";
 
 
 const Post: React.FC = ({}) => {
@@ -53,5 +52,4 @@ const Post: React.FC = ({}) => {
     )
 }
 
-export default Post
-
+export default createWithAp({ssr:true})(Post)

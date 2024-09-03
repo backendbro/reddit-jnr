@@ -11,6 +11,8 @@ import NextLink from "next/link"
 import { useRouter } from 'next/router';
 import { useState } from "react";
 import { transformErrors } from "../../ultis/trasformer";
+import { createWithAp } from "../../ultis/withApollo";
+import { MeDocument, MeQuery } from "../../generated/types";
 
 
 const ChangePassword: NextPage<{token:string}> = () => {
@@ -27,7 +29,20 @@ const ChangePassword: NextPage<{token:string}> = () => {
                     const response = await changePassword({ variables: {
                         newPassword: values.newPassword, 
                         token: router.query.token === "string" ? router.query.token : ""  
-                }}) 
+                        }, 
+                        update: (cache, {data}) => {
+                            cache.writeQuery<MeQuery> ({ 
+                                query: MeDocument, 
+                                data: {
+                                    __typename: "Query", 
+                                    me: {
+                                        __typename: "UserResponse", 
+                                        user: data.changePassword.user
+                                    }
+                                }
+                            })
+                        }
+            }) 
                 
                     if((response.data?.changePassword as RegularUserResponseFragment).errors) {  
 
@@ -91,4 +106,4 @@ const ChangePassword: NextPage<{token:string}> = () => {
 }
 
 
-export default ChangePassword 
+export default createWithAp({ssr:true})(ChangePassword) 
