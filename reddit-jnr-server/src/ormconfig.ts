@@ -4,9 +4,9 @@ import path from "path"
 
 const AppDataSource = new DataSource({
     type:"postgres", 
-    database:'lilreddit3', 
-    username:"postgres", 
-    password:'islam123', 
+    database:process.env.databaseName, 
+    username:process.env.databaseUsername, 
+    password:process.env.databasePassword, 
     logging:true, 
     synchronize:false, 
     migrations:[path.join(__dirname, "./migrations/*")],

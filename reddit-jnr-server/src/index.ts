@@ -33,11 +33,11 @@ const main = async () => {
     
     const dataSource = new DataSource ({
         type:"postgres", 
-        database:'lilreddit3', 
+        database:'lilreddit2', 
         username:"postgres", 
         password:'islam123', 
         logging:true, 
-        synchronize:false, 
+        synchronize:false,  
         migrations:[path.join(__dirname, "./migrations/*")],
         entities: [Post, User, Updoot]         
     }) 

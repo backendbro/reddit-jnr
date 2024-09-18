@@ -4,6 +4,7 @@ import { useMeQuery, useLogoutMutation } from "../generated/graphql"
 import {useRouter} from "next/router"
 import { isServer } from "../ultis/isServer"
 import { useApolloClient } from "@apollo/client";
+import { createWithAp } from "../ultis/withApollo"
 
 
 export const NavBar: React.FC = ({ }) => {
@@ -65,7 +66,7 @@ export const NavBar: React.FC = ({ }) => {
       <Flex flex={1} align="center" maxW={800} margin="auto">
         <NextLink href="/"> 
           <Link>
-            <Heading> LiReddit </Heading>
+            <Heading> Yummy.com </Heading>
           </Link>
         </NextLink>
         <Box ml={"auto"}>
@@ -77,4 +78,4 @@ export const NavBar: React.FC = ({ }) => {
 }
 
 //export default NavBar
-export default  NavBar
+export default  createWithAp({ssr:true})(NavBar)

@@ -1,9 +1,8 @@
 import {ApolloClient, InMemoryCache} from "@apollo/client"
 import { PaginatedPosts } from "../generated/graphql";
-
 import {withApollo} from "./createWithApollo/index"
-
 import { NextPageContext } from "next";
+
 
 const createClient = (ctx: NextPageContext) => new ApolloClient({
     uri: "http://localhost:4000/graphql", 
